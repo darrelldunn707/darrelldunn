@@ -3,7 +3,7 @@ import { SectionHeading, SeverityBadge } from "./DashboardPrimitives";
 
 export function RiskRegister({ risks }: { risks: RiskRegisterItem[] }) {
   return (
-    <section className="bg-white">
+    <section id="risks" className="scroll-mt-20 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <SectionHeading
           eyebrow="Risk register"

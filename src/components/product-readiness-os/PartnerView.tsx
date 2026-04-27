@@ -7,7 +7,7 @@ export function PartnerView({
   partnerReadiness: PartnerReadiness;
 }) {
   return (
-    <section className="bg-white">
+    <section id="partner-view" className="scroll-mt-20 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <SectionHeading
           eyebrow="External partner view"

@@ -6,11 +6,13 @@ export function ProductEngineeringInsights({
 }: {
   insights: ProductInsights;
 }) {
-  const feedbackEntries = Object.entries(insights.feedbackVolumeByCategory);
+  const feedbackEntries = Object.entries(
+    insights.feedbackVolumeByCategory,
+  ).sort(([, firstVolume], [, secondVolume]) => secondVolume - firstVolume);
   const maxVolume = Math.max(...feedbackEntries.map(([, volume]) => volume));
 
   return (
-    <section className="bg-stone-50">
+    <section id="insights" className="scroll-mt-20 bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <SectionHeading
           eyebrow="Product and engineering insights"
@@ -21,7 +23,7 @@ export function ProductEngineeringInsights({
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
           <div className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-stone-900">
-              Feedback volume by category
+              Feedback categories by volume
             </h3>
             <div className="mt-5 space-y-4">
               {feedbackEntries.map(([category, volume]) => (

@@ -16,7 +16,7 @@ export function LaunchScenarioPanel({
   ];
 
   return (
-    <section className="border-y border-stone-200 bg-white">
+    <section id="overview" className="scroll-mt-20 border-y border-stone-200 bg-white">
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 md:grid-cols-[1.1fr_0.9fr] md:px-8">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">

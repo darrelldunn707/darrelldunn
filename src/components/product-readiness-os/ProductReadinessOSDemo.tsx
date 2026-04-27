@@ -1,6 +1,4 @@
-"use client";
-
-import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   feedbackSamples,
   launchScenario,
@@ -11,7 +9,6 @@ import {
   supportPlaybook,
 } from "../../data/product-readiness-os";
 import { calculateReadinessScore } from "../../lib/product-readiness-os";
-import type { ViewId } from "../../types/product-readiness-os";
 import { CommandCenter } from "./CommandCenter";
 import { DemoCapabilities } from "./DemoCapabilities";
 import { FeedbackClassifier } from "./FeedbackClassifier";
@@ -21,57 +18,87 @@ import { ProductEngineeringInsights } from "./ProductEngineeringInsights";
 import { RiskRegister } from "./RiskRegister";
 import { SupportEnablementHub } from "./SupportEnablementHub";
 
-const views: { id: ViewId; label: string; description: string }[] = [
+const heroLinks = [
   {
-    id: "partner",
     label: "External Partner View",
     description: "Partner timeline, contact path, training, and beta limits.",
+    href: "#partner-view",
   },
   {
-    id: "support",
     label: "Support Team View",
     description: "Playbook, macros, escalations, and feedback triage.",
+    href: "#support-hub",
   },
   {
-    id: "command-center",
     label: "Launch Command Center",
     description: "Readiness checklist, risk register, owners, and blockers.",
+    href: "#command-center",
   },
   {
-    id: "product-engineering",
     label: "Product & Engineering View",
     description: "Feedback trends, high-severity issues, and actions.",
+    href: "#insights",
   },
 ];
 
+const sectionLinks = [
+  { label: "Overview", href: "#overview" },
+  { label: "Feedback Router", href: "#feedback-router" },
+  { label: "Command Center", href: "#command-center" },
+  { label: "Risks", href: "#risks" },
+  { label: "Support Hub", href: "#support-hub" },
+  { label: "Partner View", href: "#partner-view" },
+  { label: "Insights", href: "#insights" },
+  { label: "Demo Mapping", href: "#demo-mapping" },
+];
+
 export function ProductReadinessOSDemo() {
-  const [activeView, setActiveView] = useState<ViewId>("command-center");
-  const readinessScore = useMemo(
-    () => calculateReadinessScore(readinessChecklist),
-    [],
-  );
+  const readinessScore = calculateReadinessScore(readinessChecklist);
 
   return (
     <main className="min-h-screen bg-stone-50 font-sans text-stone-900">
-      <Hero activeView={activeView} onViewChange={setActiveView} />
+      <GlobalHeader />
+      <Hero />
+      <SectionNavigation />
       <LaunchScenarioPanel
         scenario={launchScenario}
         readinessScore={readinessScore}
       />
+      <FeedbackClassifier samples={feedbackSamples} />
       <AccessSeparation />
-      <ActiveView activeView={activeView} readinessScore={readinessScore} />
+      <CommandCenter
+        groups={readinessChecklist}
+        readinessScore={readinessScore}
+      />
+      <RiskRegister risks={riskRegister} />
+      <SupportEnablementHub playbook={supportPlaybook} />
+      <PartnerView partnerReadiness={partnerReadiness} />
+      <ProductEngineeringInsights insights={productInsights} />
       <DemoCapabilities />
     </main>
   );
 }
 
-function Hero({
-  activeView,
-  onViewChange,
-}: {
-  activeView: ViewId;
-  onViewChange: (view: ViewId) => void;
-}) {
+function GlobalHeader() {
+  return (
+    <header className="border-b border-stone-200 bg-white/95">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-8">
+        <Link href="/" className="text-sm font-semibold text-stone-950">
+          Darrell Dunn
+        </Link>
+        <Link
+          href="/product-readiness-os"
+          className="text-sm font-medium text-stone-700 transition hover:text-teal-700"
+        >
+          Product Readiness OS
+        </Link>
+        <span className="text-sm font-medium text-stone-500">Contact</span>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
   return (
     <section className="bg-[linear-gradient(135deg,#fff7ed_0%,#fefce8_42%,#ecfdf5_100%)]">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-20">
@@ -87,42 +114,54 @@ function Hero({
             support, and engineering teams.
           </p>
           <p className="mt-4 max-w-3xl text-base leading-7 text-stone-700">
-            This fictional enterprise software feature launch simulation shows how a
-            product engagement team could coordinate readiness, support
-            enablement, feedback intake, routing, and launch reporting with
-            lightweight local data.
+            This fictional work sample uses an enterprise software feature
+            launch simulation to show how a product engagement team could
+            coordinate readiness, support enablement, feedback intake, routing,
+            and launch reporting with lightweight local data.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-3 lg:grid-cols-4" role="tablist" aria-label="Product Readiness OS views">
-          {views.map((view) => {
-            const isActive = activeView === view.id;
-
-            return (
-              <button
-                key={view.id}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => onViewChange(view.id)}
-                className={`rounded-lg border p-4 text-left transition ${
-                  isActive
-                    ? "border-teal-600 bg-white shadow-md"
-                    : "border-white/70 bg-white/60 hover:border-teal-300 hover:bg-white"
-                }`}
-              >
-                <span className="block text-sm font-semibold text-stone-900">
-                  {view.label}
-                </span>
-                <span className="mt-2 block text-sm leading-5 text-stone-600">
-                  {view.description}
-                </span>
-              </button>
-            );
-          })}
+        <div
+          className="mt-10 grid gap-3 lg:grid-cols-4"
+          aria-label="Featured Product Readiness OS sections"
+        >
+          {heroLinks.map((view) => (
+            <a
+              key={view.href}
+              href={view.href}
+              className="rounded-lg border border-white/70 bg-white/70 p-4 text-left shadow-sm transition hover:border-teal-400 hover:bg-white hover:shadow-md"
+            >
+              <span className="block text-sm font-semibold text-stone-900">
+                {view.label}
+              </span>
+              <span className="mt-2 block text-sm leading-5 text-stone-600">
+                {view.description}
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function SectionNavigation() {
+  return (
+    <nav className="sticky top-0 z-20 border-b border-stone-200 bg-white/95 backdrop-blur">
+      <div className="mx-auto max-w-7xl overflow-x-auto px-4 md:px-8">
+        <div className="flex min-w-max gap-2 py-3" aria-label="Product Readiness OS sections">
+          {sectionLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="rounded-lg px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-teal-50 hover:text-teal-800"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </nav>
   );
 }
 
@@ -152,45 +191,5 @@ function AccessSeparation() {
         </div>
       </div>
     </section>
-  );
-}
-
-function ActiveView({
-  activeView,
-  readinessScore,
-}: {
-  activeView: ViewId;
-  readinessScore: number;
-}) {
-  if (activeView === "partner") {
-    return <PartnerView partnerReadiness={partnerReadiness} />;
-  }
-
-  if (activeView === "support") {
-    return (
-      <>
-        <SupportEnablementHub playbook={supportPlaybook} />
-        <FeedbackClassifier samples={feedbackSamples} />
-      </>
-    );
-  }
-
-  if (activeView === "product-engineering") {
-    return (
-      <>
-        <ProductEngineeringInsights insights={productInsights} />
-        <FeedbackClassifier samples={feedbackSamples} />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <CommandCenter
-        groups={readinessChecklist}
-        readinessScore={readinessScore}
-      />
-      <RiskRegister risks={riskRegister} />
-    </>
   );
 }

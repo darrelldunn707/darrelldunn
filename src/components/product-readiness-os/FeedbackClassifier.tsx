@@ -21,7 +21,7 @@ export function FeedbackClassifier({
   );
 
   return (
-    <section className="bg-white">
+    <section id="feedback-router" className="scroll-mt-20 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <SectionHeading
           eyebrow="Feedback intake and classification"
@@ -73,8 +73,8 @@ export function FeedbackClassifier({
                 </h3>
                 <p className="mt-3 text-sm leading-6 text-stone-700">
                   Select one of the sample feedback items to show the v1
-                  deterministic classification. A future version could add
-                  review workflow or model-assisted suggestions.
+                  deterministic classification. A future version could add a
+                  review workflow or expanded routing rules.
                 </p>
               </div>
             )}

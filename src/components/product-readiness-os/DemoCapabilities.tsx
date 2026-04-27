@@ -50,9 +50,10 @@ const capabilities = [
 
 export function DemoCapabilities() {
   return (
-    <section className="bg-white">
+    <section id="demo-mapping" className="scroll-mt-20 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 md:px-8">
         <SectionHeading
+          eyebrow="Demo mapping"
           title="What this demo demonstrates"
           description="This work sample is designed around product engagement work: coordinating launch readiness, making support teams effective, and turning customer signals into owner-ready action."
         />

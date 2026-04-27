@@ -7,7 +7,7 @@ export function SupportEnablementHub({
   playbook: SupportPlaybook;
 }) {
   return (
-    <section className="bg-stone-50">
+    <section id="support-hub" className="scroll-mt-20 bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <SectionHeading
           eyebrow="Support enablement hub"

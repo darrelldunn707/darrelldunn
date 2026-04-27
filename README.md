@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Darrell Dunn Portfolio Demo
 
-## Getting Started
+This repo contains a Next.js portfolio demo for a Product Engagement Specialist role. The main work sample is a fictional Product Readiness OS that demonstrates launch readiness, support readiness, risk tracking, feedback classification, routing, and product/engineering insights.
 
-First, run the development server:
+This is a fictional work sample. It is not an OpenAI internal tool and should not use confidential OpenAI branding or internal terminology.
+
+## Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Useful checks:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app/` - Next.js app routes and page entry points.
+- `src/components/product-readiness-os/` - Product Readiness OS UI components.
+- `src/data/product-readiness-os/` - Local demo data.
+- `src/lib/product-readiness-os/` - Demo logic and helpers.
+- `src/types/` - Shared TypeScript types.
+- `public/` - Static assets.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentation Map
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Current docs:
 
-## Deploy on Vercel
+- `README.md` - Project overview, local commands, structure, and documentation map.
+- `AGENTS.md` - Agent/workspace instructions, including Next.js version guidance.
+- `CODEX.md` - Engineering, product, content, and design constraints for Codex work.
+- `PORTFOLIO_NOTES.md` - Role target, capability framing, demo concept, and positioning notes.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Recommended root-level docs to add next:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `SPEC.md` - Product/demo spec: audience, scope, routes, views, data assumptions, non-goals, and success criteria.
+- `CONTENT.md` - Public copy rules: voice, wording boundaries, positioning, role alignment, and claims to avoid.
+- `DECISIONS.md` - Accepted project decisions: durable constraints such as local TypeScript data, no auth, no backend in version 1, and no external APIs.
+- `TODO.md` - Active work only: current next steps, bugs, and polish tasks.
+
+Optional later:
+
+- `CHANGELOG.md` - Completed changes once the demo stabilizes enough to benefit from a release-style history.
+
+No additional documentation folders are needed right now. Keep these files at the repo root until the docs become large enough to justify a dedicated `docs/` directory.
+
+## Development Notes
+
+- Read `AGENTS.md` and `CODEX.md` before making code or content changes.
+- Use local TypeScript data files first.
+- Do not add backend complexity, authentication, or external APIs unless explicitly requested.
+- Keep the demo polished, job-aligned, and clear to a non-technical reviewer.
