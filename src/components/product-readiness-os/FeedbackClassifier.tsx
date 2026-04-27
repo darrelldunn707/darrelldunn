@@ -1,7 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { classifyFeedback } from "../../lib/product-readiness-os";
+import { useState } from "react";
+import {
+  classifyCustomFeedback,
+  classifyFeedback,
+} from "../../lib/product-readiness-os";
 import type { FeedbackSample } from "../../types/product-readiness-os";
 import {
   SectionHeading,
@@ -14,11 +17,27 @@ export function FeedbackClassifier({
   samples: FeedbackSample[];
 }) {
   const [feedbackText, setFeedbackText] = useState(samples[0]?.text ?? "");
-
-  const selectedSample = useMemo(
-    () => classifyFeedback(feedbackText, samples),
-    [feedbackText, samples],
+  const [selectedSample, setSelectedSample] = useState<FeedbackSample | undefined>(
+    () => classifyFeedback(samples[0]?.text ?? "", samples),
   );
+
+  function handlePresetSelect(sample: FeedbackSample) {
+    setFeedbackText(sample.text);
+    setSelectedSample(classifyFeedback(sample.text, samples));
+  }
+
+  function handleCustomClassify() {
+    const trimmedFeedback = feedbackText.trim();
+
+    if (!trimmedFeedback) {
+      return;
+    }
+
+    setSelectedSample(
+      classifyFeedback(trimmedFeedback, samples) ??
+        classifyCustomFeedback(trimmedFeedback),
+    );
+  }
 
   return (
     <section id="feedback-router" className="scroll-mt-20 bg-white">
@@ -43,6 +62,22 @@ export function FeedbackClassifier({
               onChange={(event) => setFeedbackText(event.target.value)}
               className="mt-3 min-h-32 w-full rounded-lg border border-stone-300 bg-white p-4 text-sm leading-6 text-stone-900 outline-none ring-teal-200 transition focus:border-teal-600 focus:ring-4"
             />
+            <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
+              <p className="text-xs leading-5 text-stone-600">
+                <span className="block">Presets classify instantly.</span>
+                <span className="block">
+                  Custom text updates when you click the button.
+                </span>
+              </p>
+              <button
+                type="button"
+                onClick={handleCustomClassify}
+                disabled={!feedbackText.trim()}
+                className="ml-auto rounded-lg bg-teal-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 active:bg-teal-950 disabled:cursor-not-allowed disabled:bg-stone-200 disabled:text-stone-500"
+              >
+                Classify feedback
+              </button>
+            </div>
 
             <div className="mt-5">
               <p className="text-sm font-semibold text-stone-900">
@@ -53,7 +88,7 @@ export function FeedbackClassifier({
                   <button
                     key={sample.id}
                     type="button"
-                    onClick={() => setFeedbackText(sample.text)}
+                    onClick={() => handlePresetSelect(sample)}
                     className="rounded-lg border border-stone-200 bg-white px-4 py-3 text-left text-sm leading-5 text-stone-800 shadow-sm transition hover:border-teal-300 hover:bg-teal-50"
                   >
                     {sample.text}
@@ -95,7 +130,10 @@ function ClassificationResult({ sample }: { sample: FeedbackSample }) {
     ["Engineering-ready problem statement", result.engineeringProblemStatement],
     ["Suggested support response", result.suggestedSupportResponse],
     ["Recommended next action", result.recommendedNextAction],
+    ["Confidence level", result.confidenceLevel ?? "Medium"],
+    ["Why this route?", result.routeExplanation ?? "Matched to local deterministic routing rules."],
   ];
+  const dashboardImpact = result.dashboardImpact;
 
   return (
     <div>
@@ -119,6 +157,40 @@ function ClassificationResult({ sample }: { sample: FeedbackSample }) {
           </div>
         ))}
       </dl>
+
+      {dashboardImpact ? (
+        <div className="mt-6 rounded-lg border border-teal-100 bg-teal-50 p-5">
+          <h4 className="text-sm font-semibold text-stone-900">
+            Dashboard impact preview
+          </h4>
+          <dl className="mt-4 grid gap-4 text-sm md:grid-cols-3">
+            <div>
+              <dt className="font-semibold text-stone-900">
+                Expected support impact
+              </dt>
+              <dd className="mt-1 leading-6 text-stone-700">
+                {dashboardImpact.expectedSupportImpact}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-stone-900">
+                Risk register update
+              </dt>
+              <dd className="mt-1 leading-6 text-stone-700">
+                {dashboardImpact.shouldUpdateRiskRegister}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-stone-900">
+                Product / engineering insights
+              </dt>
+              <dd className="mt-1 leading-6 text-stone-700">
+                {dashboardImpact.shouldIncludeInProductEngineeringInsights}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      ) : null}
     </div>
   );
 }

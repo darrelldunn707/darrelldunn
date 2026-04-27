@@ -17,9 +17,12 @@ export type RiskStatus = "Monitoring" | "Mitigating" | "Escalated" | "Closed";
 export type FeedbackCategory =
   | "Reliability"
   | "Permissions"
-  | "Authentication"
+  | "Authentication / SSO"
   | "Documentation"
-  | "Partner Operations";
+  | "Partner Operations"
+  | "General / Needs Review";
+
+export type ConfidenceLevel = "High" | "Medium" | "Low";
 
 export type LaunchScenario = {
   name: string;
@@ -91,6 +94,16 @@ export type FeedbackClassification = {
   engineeringProblemStatement: string;
   suggestedSupportResponse: string;
   recommendedNextAction: string;
+  confidenceLevel?: ConfidenceLevel;
+  routeExplanation?: string;
+  triggeredTerms?: string[];
+  dashboardImpact?: FeedbackDashboardImpact;
+};
+
+export type FeedbackDashboardImpact = {
+  expectedSupportImpact: string;
+  shouldUpdateRiskRegister: string;
+  shouldIncludeInProductEngineeringInsights: string;
 };
 
 export type FeedbackSample = {
@@ -100,7 +113,7 @@ export type FeedbackSample = {
 };
 
 export type ProductInsights = {
-  feedbackVolumeByCategory: Record<FeedbackCategory, number>;
+  feedbackVolumeByCategory: Partial<Record<FeedbackCategory, number>>;
   openHighSeverityIssues: string[];
   topCustomerPainPoints: string[];
   recommendedProductActions: string[];

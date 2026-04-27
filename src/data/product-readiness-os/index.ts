@@ -359,7 +359,7 @@ export const feedbackSamples: FeedbackSample[] = [
     id: "sso",
     text: "Customers cannot complete setup when SSO is enabled.",
     classification: {
-      category: "Authentication",
+      category: "Authentication / SSO",
       severity: "Critical",
       userImpact: "SSO-enabled customers may be blocked from onboarding.",
       likelyOwner: "Identity Engineering",
@@ -412,7 +412,7 @@ export const productInsights: ProductInsights = {
   feedbackVolumeByCategory: {
     Reliability: 18,
     Permissions: 14,
-    Authentication: 9,
+    "Authentication / SSO": 9,
     Documentation: 12,
     "Partner Operations": 7,
   },
