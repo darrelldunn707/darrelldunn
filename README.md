@@ -34,11 +34,9 @@ Current docs:
 
 - `README.md` - Project overview, local commands, structure, and documentation map.
 - `AGENTS.md` - Agent/workspace instructions, including Next.js version guidance.
+- `BRAND.md` - Current color palette, UI color roles, and brand usage notes.
 - `CODEX.md` - Engineering, product, content, and design constraints for Codex work.
 - `PORTFOLIO_NOTES.md` - Role target, capability framing, demo concept, and positioning notes.
-
-Recommended root-level docs to add next:
-
 - `SPEC.md` - Product/demo spec: audience, scope, routes, views, data assumptions, non-goals, and success criteria.
 - `CONTENT.md` - Public copy rules: voice, wording boundaries, positioning, role alignment, and claims to avoid.
 - `DECISIONS.md` - Accepted project decisions: durable constraints such as local TypeScript data, no auth, no backend in version 1, and no external APIs.

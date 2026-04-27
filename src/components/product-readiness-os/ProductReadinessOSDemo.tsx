@@ -16,13 +16,14 @@ import { LaunchScenarioPanel } from "./LaunchScenarioPanel";
 import { PartnerView } from "./PartnerView";
 import { ProductEngineeringInsights } from "./ProductEngineeringInsights";
 import { RiskRegister } from "./RiskRegister";
+import { SectionNavigation } from "./SectionNavigation";
 import { SupportEnablementHub } from "./SupportEnablementHub";
 
 const heroLinks = [
   {
-    label: "External Partner View",
-    description: "Partner timeline, contact path, training, and beta limits.",
-    href: "#partner-view",
+    label: "Launch Command Center",
+    description: "Readiness checklist, risk register, owners, and blockers.",
+    href: "#command-center",
   },
   {
     label: "Support Team View",
@@ -30,9 +31,9 @@ const heroLinks = [
     href: "#support-hub",
   },
   {
-    label: "Launch Command Center",
-    description: "Readiness checklist, risk register, owners, and blockers.",
-    href: "#command-center",
+    label: "External Partner View",
+    description: "Partner timeline, contact path, training, and beta limits.",
+    href: "#partner-view",
   },
   {
     label: "Product & Engineering View",
@@ -41,22 +42,11 @@ const heroLinks = [
   },
 ];
 
-const sectionLinks = [
-  { label: "Overview", href: "#overview" },
-  { label: "Feedback Router", href: "#feedback-router" },
-  { label: "Command Center", href: "#command-center" },
-  { label: "Risks", href: "#risks" },
-  { label: "Support Hub", href: "#support-hub" },
-  { label: "Partner View", href: "#partner-view" },
-  { label: "Insights", href: "#insights" },
-  { label: "Demo Mapping", href: "#demo-mapping" },
-];
-
 export function ProductReadinessOSDemo() {
   const readinessScore = calculateReadinessScore(readinessChecklist);
 
   return (
-    <main className="min-h-screen bg-stone-50 font-sans text-stone-900">
+    <main id="top" className="min-h-screen bg-stone-50 pb-16 font-sans text-stone-900">
       <GlobalHeader />
       <Hero />
       <SectionNavigation />
@@ -75,6 +65,7 @@ export function ProductReadinessOSDemo() {
       <PartnerView partnerReadiness={partnerReadiness} />
       <ProductEngineeringInsights insights={productInsights} />
       <DemoCapabilities />
+      <FloatingTopLink />
     </main>
   );
 }
@@ -121,8 +112,11 @@ function Hero() {
           </p>
         </div>
 
+        <p className="mt-10 text-xs font-semibold uppercase tracking-[0.18em] text-teal-800">
+          Explore the demo by stakeholder view
+        </p>
         <div
-          className="mt-10 grid gap-3 lg:grid-cols-4"
+          className="mt-3 grid gap-3 lg:grid-cols-4"
           aria-label="Featured Product Readiness OS sections"
         >
           {heroLinks.map((view) => (
@@ -145,23 +139,15 @@ function Hero() {
   );
 }
 
-function SectionNavigation() {
+function FloatingTopLink() {
   return (
-    <nav className="sticky top-0 z-20 border-b border-stone-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto max-w-7xl overflow-x-auto px-4 md:px-8">
-        <div className="flex min-w-max gap-2 py-3" aria-label="Product Readiness OS sections">
-          {sectionLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-teal-50 hover:text-teal-800"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-      </div>
-    </nav>
+    <a
+      href="#top"
+      aria-label="Back to top"
+      className="fixed bottom-4 right-4 z-30 rounded-full border border-stone-200 bg-white/90 px-3 py-2 text-xs font-semibold text-stone-700 shadow-sm backdrop-blur transition hover:border-teal-300 hover:bg-teal-50 hover:text-teal-800 sm:bottom-6 sm:right-6"
+    >
+      Top ↑
+    </a>
   );
 }
 
