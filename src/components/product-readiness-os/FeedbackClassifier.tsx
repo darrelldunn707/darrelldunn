@@ -62,22 +62,24 @@ export function FeedbackClassifier({
               onChange={(event) => setFeedbackText(event.target.value)}
               className="mt-3 min-h-32 w-full rounded-lg border border-stone-300 bg-white p-4 text-sm leading-6 text-stone-900 outline-none ring-teal-200 transition focus:border-teal-600 focus:ring-4"
             />
-            <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
-              <p className="text-xs leading-5 text-stone-600">
-                <span className="block">Presets classify instantly.</span>
-                <span className="block">
-                  Custom text updates when you click the button.
-                </span>
-              </p>
+            <div className="mt-3 flex justify-end">
               <button
                 type="button"
                 onClick={handleCustomClassify}
                 disabled={!feedbackText.trim()}
-                className="ml-auto rounded-lg bg-teal-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 active:bg-teal-950 disabled:cursor-not-allowed disabled:bg-stone-200 disabled:text-stone-500"
+                className="rounded-lg bg-teal-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 active:bg-teal-950 disabled:cursor-not-allowed disabled:bg-stone-200 disabled:text-stone-500"
               >
                 Classify feedback
               </button>
             </div>
+            <p className="mt-2 text-xs leading-5 text-stone-600">
+              <span className="block">
+                Preset examples below classify instantly.
+              </span>
+              <span className="block">
+                Custom text entered above updates with Classify feedback button.
+              </span>
+            </p>
 
             <div className="mt-5">
               <p className="text-sm font-semibold text-stone-900">
