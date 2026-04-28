@@ -23,8 +23,8 @@ export function CommandCenter({
     <section id="command-center" className="scroll-mt-20 bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <SectionHeading
-          eyebrow="Launch readiness command center"
-          title="Workstream readiness, owners, and open launch dependencies"
+          eyebrow="Launch readiness"
+          title="Launch Readiness"
           description="Internal teams can quickly see which workstreams are complete, which items need attention, and where launch approval depends on follow-through."
         />
 
@@ -53,6 +53,26 @@ export function CommandCenter({
 
         <div className="mt-8 rounded-lg border border-stone-200 bg-white p-5 shadow-sm">
           <ProgressBar value={readinessScore} label="Overall readiness" />
+        </div>
+
+        <div className="mt-6 rounded-lg border border-teal-100 bg-teal-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-800">
+            OpenLoop Signal
+          </p>
+          <h3 className="mt-2 text-lg font-semibold text-stone-900">
+            3 routed feedback clusters are currently affecting launch readiness
+          </h3>
+          <ul className="mt-4 grid gap-2 text-sm leading-6 text-stone-700 md:grid-cols-3">
+            <li className="rounded-lg bg-white p-3 shadow-sm">
+              SSO setup failures
+            </li>
+            <li className="rounded-lg bg-white p-3 shadow-sm">
+              Connector permissions confusion
+            </li>
+            <li className="rounded-lg bg-white p-3 shadow-sm">
+              Partner training gaps
+            </li>
+          </ul>
         </div>
 
         <div className="mt-8 grid gap-5 lg:grid-cols-2">

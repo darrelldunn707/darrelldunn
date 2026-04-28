@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 const sectionLinks = [
   { label: "Overview", href: "#overview" },
   { label: "Feedback Router", href: "#feedback-router" },
-  { label: "Command Center", href: "#command-center" },
+  { label: "Launch Readiness", href: "#command-center" },
   { label: "Risks", href: "#risks" },
   { label: "Support Hub", href: "#support-hub" },
   { label: "Partner View", href: "#partner-view" },
   { label: "Insights", href: "#insights" },
-  { label: "Demo Mapping", href: "#demo-mapping" },
+  { label: "Role Mapping", href: "#demo-mapping" },
 ];
 
 export function SectionNavigation() {

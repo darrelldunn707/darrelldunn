@@ -39,7 +39,7 @@ const capabilities = [
   {
     title: "Readiness reporting",
     description:
-      "The command center shows score, status counts, workstream health, and launch concerns.",
+      "Launch Readiness shows score, status counts, workstream health, and launch concerns.",
   },
   {
     title: "Lightweight tooling thinking",
@@ -53,8 +53,8 @@ export function DemoCapabilities() {
     <section id="demo-mapping" className="scroll-mt-20 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 md:px-8">
         <SectionHeading
-          eyebrow="Demo mapping"
-          title="What this demo demonstrates"
+          eyebrow="Role mapping"
+          title="How this maps to the role"
           description="This work sample is designed around product engagement work: coordinating launch readiness, making support teams effective, and turning customer signals into owner-ready action."
         />
 

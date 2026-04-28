@@ -8,8 +8,11 @@ export function ProductEngineeringInsights({
 }) {
   const feedbackEntries = Object.entries(
     insights.feedbackVolumeByCategory,
-  ).sort(([, firstVolume], [, secondVolume]) => secondVolume - firstVolume);
-  const maxVolume = Math.max(...feedbackEntries.map(([, volume]) => volume));
+  ).sort(
+    ([, firstVolume], [, secondVolume]) =>
+      (secondVolume ?? 0) - (firstVolume ?? 0),
+  );
+  const maxVolume = Math.max(...feedbackEntries.map(([, volume]) => volume ?? 0));
 
   return (
     <section id="insights" className="scroll-mt-20 bg-stone-50">
@@ -32,12 +35,12 @@ export function ProductEngineeringInsights({
                     <span className="font-medium text-stone-800">
                       {category}
                     </span>
-                    <span className="text-stone-600">{volume} reports</span>
+                    <span className="text-stone-600">{volume ?? 0} reports</span>
                   </div>
                   <div className="h-3 overflow-hidden rounded-full bg-stone-200">
                     <div
                       className="h-full rounded-full bg-teal-600"
-                      style={{ width: `${(volume / maxVolume) * 100}%` }}
+                      style={{ width: `${((volume ?? 0) / maxVolume) * 100}%` }}
                     />
                   </div>
                 </div>

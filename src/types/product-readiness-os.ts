@@ -20,9 +20,12 @@ export type FeedbackCategory =
   | "Authentication / SSO"
   | "Documentation"
   | "Partner Operations"
+  | "Needs triage"
   | "General / Needs Review";
 
 export type ConfidenceLevel = "High" | "Medium" | "Low";
+
+export type FeedbackSeverity = "Sev 1" | "Sev 2" | "Sev 3" | "Sev 4" | "Sev 5";
 
 export type LaunchScenario = {
   name: string;
@@ -86,24 +89,41 @@ export type SupportPlaybook = {
 };
 
 export type FeedbackClassification = {
+  productArea: string;
+  featureWorkflow: string;
   category: FeedbackCategory;
-  severity: RiskSeverity;
-  userImpact: string;
+  subcategory: string;
+  issueType: string;
+  severity: FeedbackSeverity;
+  confidenceLevel: ConfidenceLevel;
+  confidenceScore: number;
   likelyOwner: string;
   recommendedRoute: string;
-  engineeringProblemStatement: string;
+  escalationStatus: string;
+  humanReviewNeeded: string;
+  userImpact: string;
+  duplicateCluster: string;
+  similarReports: number;
+  uniqueCustomersAffected: number;
+  trend: string;
+  engineeringReadyProblemStatement: string;
   suggestedSupportResponse: string;
   recommendedNextAction: string;
-  confidenceLevel?: ConfidenceLevel;
-  routeExplanation?: string;
-  triggeredTerms?: string[];
-  dashboardImpact?: FeedbackDashboardImpact;
+  whyThisRoute: string;
+  sourceChannel: string;
+  customerSegment: string;
+  status: string;
+  feedbackId: string;
+  createdFrom: string;
+  prioritySignal: string;
+  dashboardImpact: FeedbackDashboardImpact;
 };
 
 export type FeedbackDashboardImpact = {
-  expectedSupportImpact: string;
-  shouldUpdateRiskRegister: string;
-  shouldIncludeInProductEngineeringInsights: string;
+  launchReadinessImpact: string;
+  riskRegisterUpdate: string;
+  supportHubUpdate: string;
+  productEngineeringInsight: string;
 };
 
 export type FeedbackSample = {

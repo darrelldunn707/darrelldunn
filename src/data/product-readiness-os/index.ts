@@ -325,85 +325,243 @@ export const feedbackSamples: FeedbackSample[] = [
     id: "large-files",
     text: "The connector disconnects when uploading large files.",
     classification: {
+      productArea: "Connector reliability",
+      featureWorkflow: "Large-file content sync",
       category: "Reliability",
-      severity: "High",
-      userImpact: "Admins may be unable to complete initial content sync.",
+      subcategory: "Sync stability",
+      issueType: "Workflow failure",
+      severity: "Sev 2",
+      confidenceLevel: "High",
+      confidenceScore: 92,
       likelyOwner: "Connector Engineering",
-      recommendedRoute: "Create engineering triage issue and attach upload size, source, and disconnect timing.",
-      engineeringProblemStatement:
+      recommendedRoute:
+        "Support -> Connector Engineering with upload size, source, and disconnect timing.",
+      escalationStatus: "Escalation recommended - core workflow risk",
+      humanReviewNeeded: "No",
+      userImpact: "Admins may be unable to complete initial content sync.",
+      duplicateCluster: "Large-file sync disconnects",
+      similarReports: 18,
+      uniqueCustomersAffected: 6,
+      trend: "Increasing during pilot setup",
+      engineeringReadyProblemStatement:
         "During beta setup, the connector disconnects when admins upload large files, preventing successful initial sync for affected enterprise accounts.",
       suggestedSupportResponse:
         "We are reviewing a reliability issue related to large-file sync. Please share the file size range and the step where the disconnect occurred so we can route it accurately.",
       recommendedNextAction:
         "Escalate to Connector Engineering and add to launch-day reliability watchlist.",
+      whyThisRoute:
+        "Triggered reliability terms: disconnects, uploading, large files. The issue blocks initial sync, so it routes to Connector Engineering.",
+      sourceChannel: "Support ticket",
+      customerSegment: "Enterprise admins",
+      status: "Routed",
+      feedbackId: "FB-1001",
+      createdFrom: "Preset feedback example",
+      prioritySignal:
+        "Recurring Sev 2 issue affecting enterprise users during launch window.",
+      dashboardImpact: {
+        launchReadinessImpact:
+          "Lowers confidence in engineering readiness for connector sync stability.",
+        riskRegisterUpdate:
+          "Update the reliability launch risk with mitigation and monitoring thresholds.",
+        supportHubUpdate:
+          "Add known issue language and request file size, source, and disconnect timing.",
+        productEngineeringInsight:
+          "Prioritize large-file sync validation before launch approval.",
+      },
     },
   },
   {
     id: "permissions",
     text: "Admins are confused about permission settings.",
     classification: {
+      productArea: "Enterprise administration",
+      featureWorkflow: "Connector permissions",
       category: "Permissions",
-      severity: "Medium",
-      userImpact: "Admins may delay setup while confirming access rules.",
+      subcategory: "Access model clarity",
+      issueType: "Usability / comprehension issue",
+      severity: "Sev 4",
+      confidenceLevel: "High",
+      confidenceScore: 88,
       likelyOwner: "Product Manager",
-      recommendedRoute: "Route to Product and Documentation for permission-language review.",
-      engineeringProblemStatement:
+      recommendedRoute: "Support -> Product Ops -> Product Manager",
+      escalationStatus: "Not escalated",
+      humanReviewNeeded: "No",
+      userImpact: "Admins may delay setup while confirming access rules.",
+      duplicateCluster: "Connector permission confusion",
+      similarReports: 14,
+      uniqueCustomersAffected: 5,
+      trend: "Recurring setup question",
+      engineeringReadyProblemStatement:
         "Enterprise admins are not consistently understanding how connector permission settings map to user access during setup.",
       suggestedSupportResponse:
         "The connector follows the access settings configured by the admin. We can help review the intended workspace and user scope before you enable sync.",
       recommendedNextAction:
         "Update setup docs and support macro examples with clearer permission scenarios.",
+      whyThisRoute:
+        "Triggered permissions terms: admins, confused, permission settings. The signal is about product language and setup comprehension.",
+      sourceChannel: "Support ticket",
+      customerSegment: "Enterprise admins",
+      status: "Routed",
+      feedbackId: "FB-1002",
+      createdFrom: "Preset feedback example",
+      prioritySignal:
+        "Recurring permissions confusion affecting enterprise setup confidence.",
+      dashboardImpact: {
+        launchReadinessImpact:
+          "Affects product and documentation readiness because permission language is not launch-clear.",
+        riskRegisterUpdate:
+          "Update the permissions confusion risk if repeat reports continue.",
+        supportHubUpdate:
+          "Refresh macros with approved permission examples and workspace language.",
+        productEngineeringInsight:
+          "Add setup-screen helper text for permission scope before beta expansion.",
+      },
     },
   },
   {
     id: "sso",
     text: "Customers cannot complete setup when SSO is enabled.",
     classification: {
+      productArea: "Identity and access",
+      featureWorkflow: "SSO setup",
       category: "Authentication / SSO",
-      severity: "Critical",
-      userImpact: "SSO-enabled customers may be blocked from onboarding.",
+      subcategory: "Authentication setup",
+      issueType: "Launch blocker",
+      severity: "Sev 2",
+      confidenceLevel: "High",
+      confidenceScore: 94,
       likelyOwner: "Identity Engineering",
-      recommendedRoute: "Escalate through the launch blocker path with tenant configuration details.",
-      engineeringProblemStatement:
+      recommendedRoute:
+        "Support -> Identity Engineering escalation with tenant configuration details.",
+      escalationStatus: "Escalation recommended - core workflow risk",
+      humanReviewNeeded: "No",
+      userImpact: "SSO-enabled customers may be blocked from onboarding.",
+      duplicateCluster: "SSO setup failures",
+      similarReports: 9,
+      uniqueCustomersAffected: 4,
+      trend: "Launch-blocking pattern for SSO-enabled tenants",
+      engineeringReadyProblemStatement:
         "Enterprise customers with SSO enabled cannot complete connector setup, blocking beta onboarding for affected tenants.",
       suggestedSupportResponse:
         "We are going to review this with the identity team. Please send the setup step, SSO provider, and any visible error state so they can investigate quickly.",
       recommendedNextAction:
         "Mark as launch blocker, notify Identity Engineering, and update the risk register.",
+      whyThisRoute:
+        "Triggered authentication terms: cannot, setup, SSO. The issue blocks setup for an important enterprise segment.",
+      sourceChannel: "Support escalation",
+      customerSegment: "Enterprise admins using SSO",
+      status: "Escalated",
+      feedbackId: "FB-1003",
+      createdFrom: "Preset feedback example",
+      prioritySignal:
+        "Recurring Sev 2 issue affecting enterprise SSO users during launch window.",
+      dashboardImpact: {
+        launchReadinessImpact:
+          "Blocks identity readiness until SSO setup is validated with pilot tenants.",
+        riskRegisterUpdate:
+          "Update the SSO blocker risk with mitigation owner and launch decision criteria.",
+        supportHubUpdate:
+          "Publish final SSO blocked macro and required tenant details.",
+        productEngineeringInsight:
+          "Prioritize SSO failure-path validation before launch approval.",
+      },
     },
   },
   {
     id: "docs-access",
     text: "The setup docs do not explain who can access synced files.",
     classification: {
+      productArea: "Launch enablement",
+      featureWorkflow: "Setup documentation",
       category: "Documentation",
-      severity: "Medium",
-      userImpact: "Security reviewers may need extra clarification before approving setup.",
+      subcategory: "Permission visibility docs",
+      issueType: "Documentation gap",
+      severity: "Sev 4",
+      confidenceLevel: "High",
+      confidenceScore: 90,
       likelyOwner: "Documentation",
-      recommendedRoute: "Route to Documentation with Product and Policy review.",
-      engineeringProblemStatement:
+      recommendedRoute: "Support -> Documentation with Product and Policy review",
+      escalationStatus: "Not escalated",
+      humanReviewNeeded: "No",
+      userImpact: "Security reviewers may need extra clarification before approving setup.",
+      duplicateCluster: "File access docs gap",
+      similarReports: 12,
+      uniqueCustomersAffected: 4,
+      trend: "Recurring documentation clarification",
+      engineeringReadyProblemStatement:
         "Setup documentation does not clearly explain file-access visibility after sync, creating avoidable review cycles for enterprise admins.",
       suggestedSupportResponse:
         "Thanks for flagging this. We are clarifying the access explanation in the beta docs and can help confirm the intended access model for your workspace.",
       recommendedNextAction:
         "Add a permission visibility section to beta docs and partner FAQ.",
+      whyThisRoute:
+        "Triggered documentation terms: setup docs, explain, access synced files. The issue is a docs gap with product and policy review needs.",
+      sourceChannel: "Customer feedback",
+      customerSegment: "Security reviewers and enterprise admins",
+      status: "Routed",
+      feedbackId: "FB-1004",
+      createdFrom: "Preset feedback example",
+      prioritySignal:
+        "Repeat documentation gap creating avoidable support contact during launch.",
+      dashboardImpact: {
+        launchReadinessImpact:
+          "Affects documentation readiness and partner-facing FAQ completeness.",
+        riskRegisterUpdate:
+          "Update documentation edge-case risk if unclear access language persists.",
+        supportHubUpdate:
+          "Add a support snippet for file access visibility and required follow-up data.",
+        productEngineeringInsight:
+          "Clarify access visibility across docs, FAQ, and setup helper text.",
+      },
     },
   },
   {
     id: "partner-routing",
     text: "Partner support teams are asking where to send enterprise issues.",
     classification: {
+      productArea: "Partner operations",
+      featureWorkflow: "Partner escalation path",
       category: "Partner Operations",
-      severity: "High",
-      userImpact: "Partner teams may delay customer support if routing is unclear.",
+      subcategory: "Routing clarity",
+      issueType: "Operational routing issue",
+      severity: "Sev 2",
+      confidenceLevel: "High",
+      confidenceScore: 89,
       likelyOwner: "Partner Operations",
-      recommendedRoute: "Route to Partner Operations and publish the partner support contact path.",
-      engineeringProblemStatement:
+      recommendedRoute:
+        "Support -> Partner Operations to confirm regional escalation owners.",
+      escalationStatus: "Escalation recommended - launch operations risk",
+      humanReviewNeeded: "No",
+      userImpact: "Partner teams may delay customer support if routing is unclear.",
+      duplicateCluster: "Partner issue routing confusion",
+      similarReports: 7,
+      uniqueCustomersAffected: 3,
+      trend: "Recurring regional partner readiness gap",
+      engineeringReadyProblemStatement:
         "Partner support teams do not have a clear routing path for enterprise beta issues, increasing time to triage customer-impacting reports.",
       suggestedSupportResponse:
         "Please send beta launch issues through the partner support path with customer impact, setup step, and urgency so the launch team can triage them.",
       recommendedNextAction:
         "Confirm regional escalation owners and send partner routing update.",
+      whyThisRoute:
+        "Triggered partner operations terms: partner support teams, send, enterprise issues. The signal is about routing ownership.",
+      sourceChannel: "Partner support report",
+      customerSegment: "External partner support teams",
+      status: "Routed",
+      feedbackId: "FB-1005",
+      createdFrom: "Preset feedback example",
+      prioritySignal:
+        "Recurring partner routing gap affecting launch response time.",
+      dashboardImpact: {
+        launchReadinessImpact:
+          "Affects partner readiness until escalation owners and contact path are confirmed.",
+        riskRegisterUpdate:
+          "Update partner training and routing risk with owner confirmation.",
+        supportHubUpdate:
+          "Add partner routing macro and escalation owner checklist.",
+        productEngineeringInsight:
+          "Track partner routing confusion as a launch operations insight.",
+      },
     },
   },
 ];
