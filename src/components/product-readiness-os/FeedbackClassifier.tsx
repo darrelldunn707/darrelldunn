@@ -77,7 +77,18 @@ type SeedClusterProfile = Pick<
 const OPENLOOP_SESSION_KEY = "openloopFeedbackSession";
 const FIRST_SESSION_FEEDBACK_ID = 1028;
 const CONFIRMATION_DURATION_MS = 12000;
+const SEED_POOL_RECORD_COUNT = 70;
 const SEED_RECORD_COUNT = 40;
+const seedClusterWeights: Record<string, number> = {
+  "SSO setup failures": 14,
+  "Connector permissions confusion": 12,
+  "Partner training gaps": 11,
+  "Documentation mismatch": 10,
+  "Voice audio cutoff": 8,
+  "Admin onboarding confusion": 7,
+  "Billing plan mismatch": 5,
+  "Policy / Safety review confusion": 3,
+};
 const seedClusterProfiles: SeedClusterProfile[] = [
   {
     duplicateCluster: "Partner training gaps",
@@ -1714,9 +1725,13 @@ function buildSeedSessionRecords(
   const now = Date.now();
   const firstSeedIdNumber =
     Number(getNextFeedbackId(existingRecords).replace("FB-", "")) || FIRST_SESSION_FEEDBACK_ID;
+  const weightedProfiles = getWeightedSeedProfiles(now).slice(
+    0,
+    SEED_RECORD_COUNT,
+  );
 
   return Array.from({ length: SEED_RECORD_COUNT }, (_, index) => {
-    const profile = seedClusterProfiles[index % seedClusterProfiles.length];
+    const profile = weightedProfiles[index % weightedProfiles.length];
     const baseSample =
       samples.find((sample) => sample.classification.category === profile.category) ??
       samples[index % samples.length];
@@ -1772,6 +1787,58 @@ function buildSeedSessionRecords(
       classification: sessionSample.classification,
     };
   });
+}
+
+function getWeightedSeedProfiles(seed: number) {
+  const weightedProfiles = Array.from(
+    { length: SEED_POOL_RECORD_COUNT },
+    (_, index) => getWeightedSeedProfile(index),
+  );
+
+  return shuffleSeedProfiles(weightedProfiles, seed);
+}
+
+function getWeightedSeedProfile(index: number) {
+  let remainingIndex = index % getSeedPoolWeight();
+
+  for (const profile of seedClusterProfiles) {
+    const weight = seedClusterWeights[profile.duplicateCluster] ?? 1;
+
+    if (remainingIndex < weight) {
+      return profile;
+    }
+
+    remainingIndex -= weight;
+  }
+
+  return seedClusterProfiles[0];
+}
+
+function getSeedPoolWeight() {
+  return seedClusterProfiles.reduce(
+    (totalWeight, profile) =>
+      totalWeight + (seedClusterWeights[profile.duplicateCluster] ?? 1),
+    0,
+  );
+}
+
+function shuffleSeedProfiles(
+  profiles: SeedClusterProfile[],
+  seed: number,
+) {
+  const shuffledProfiles = [...profiles];
+  let randomSeed = seed % 2147483647;
+
+  for (let index = shuffledProfiles.length - 1; index > 0; index -= 1) {
+    randomSeed = randomSeed * 16807 % 2147483647;
+    const swapIndex = randomSeed % (index + 1);
+    const currentProfile = shuffledProfiles[index];
+
+    shuffledProfiles[index] = shuffledProfiles[swapIndex];
+    shuffledProfiles[swapIndex] = currentProfile;
+  }
+
+  return shuffledProfiles;
 }
 
 function getSeedCreatedAt(now: number, index: number) {
