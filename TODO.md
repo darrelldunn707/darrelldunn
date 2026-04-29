@@ -18,6 +18,5 @@ This file tracks active work only. Completed work should be removed or moved to 
 ## Backlog
 
 - Phase 5: Add the Complete Task loop after the routed task model is ready to update Open Tasks, Completed Tasks, cluster status, risk status, launch readiness impact, Support Hub updates, and Product / Engineering Insight updates.
-- Consider extracting OpenLoop session, cluster, and routed task helpers from `FeedbackClassifier.tsx` into `src/lib/product-readiness-os/` before Phase 5 grows the state model.
 - Consider screenshots or a short walkthrough only if they help reviewers understand the demo faster.
 - Revisit whether a `docs/` directory is needed after the documentation set grows.

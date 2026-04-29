@@ -136,6 +136,71 @@ export type FeedbackSample = {
   classification: FeedbackClassification;
 };
 
+export type OpenLoopSessionSource =
+  | "Preset example"
+  | "Custom feedback input"
+  | "Seed sample launch feedback";
+
+export type OpenLoopSessionRecord = {
+  sessionId: string;
+  text: string;
+  source: OpenLoopSessionSource;
+  department: string;
+  createdAt: string;
+  ingestedAt: string;
+  classification: FeedbackClassification;
+};
+
+export type OpenLoopClusterTrend =
+  | "One-off"
+  | "Watching"
+  | "Rising"
+  | "Escalating";
+
+export type OpenLoopClusterSummary = {
+  category: string;
+  clusterName: string;
+  customerSegment: string;
+  totalReports: number;
+  uniqueCustomersAffected: number;
+  severeImpactCount: number;
+  last24hReports: number;
+  trend: OpenLoopClusterTrend;
+  suggestedOwner: string;
+  prioritySignal: string;
+};
+
+export type OpenLoopTaskPriority = "High" | "Medium" | "Low" | "Review";
+
+export type OpenLoopRoutedTask = {
+  task: string;
+  department: string;
+  linkedCluster: string;
+  priority: OpenLoopTaskPriority;
+  status: "Open" | "Needs review" | "In progress";
+  sourceSignal: string;
+  totalReports: number;
+  severeImpactCount: number;
+  trend: OpenLoopClusterTrend;
+};
+
+export type OpenLoopSeedClusterProfile = Pick<
+  FeedbackClassification,
+  | "category"
+  | "customerSegment"
+  | "duplicateCluster"
+  | "featureWorkflow"
+  | "issueType"
+  | "likelyOwner"
+  | "prioritySignal"
+  | "recommendedRoute"
+  | "subcategory"
+> & {
+  defaultSeverities: FeedbackSeverity[];
+  sampleFeedback: string;
+  sourceChannel: string;
+};
+
 export type ProductInsights = {
   feedbackVolumeByCategory: Partial<Record<FeedbackCategory, number>>;
   openHighSeverityIssues: string[];
