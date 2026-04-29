@@ -1,6 +1,6 @@
 # Darrell Dunn Portfolio Demo
 
-This repo contains a Next.js portfolio demo for a Product Engagement Specialist role. The main work sample is a fictional Product Readiness OS that demonstrates launch readiness, support readiness, risk tracking, feedback classification, routing, and product/engineering insights.
+This repo contains a Next.js portfolio demo for a Product Engagement Specialist role. The main work sample is a fictional Product Readiness OS that demonstrates launch readiness, support readiness, risk tracking, feedback classification, routing, routed follow-up work, and product/engineering insights.
 
 This is a fictional work sample. It is not an OpenAI internal tool and should not use confidential OpenAI branding or internal terminology.
 
@@ -39,18 +39,17 @@ Current docs:
 - `PORTFOLIO_NOTES.md` - Role target, capability framing, demo concept, and positioning notes.
 - `SPEC.md` - Product/demo spec: audience, scope, routes, views, data assumptions, non-goals, and success criteria.
 - `CONTENT.md` - Public copy rules: voice, wording boundaries, positioning, role alignment, and claims to avoid.
-- `DECISIONS.md` - Accepted project decisions: durable constraints such as local TypeScript data, no auth, no backend in version 1, and no external APIs.
+- `DECISIONS.md` - Accepted project decisions: durable constraints such as local TypeScript data, browser-local demo session state, no auth, no backend in version 1, and no external APIs.
 - `TODO.md` - Active work only: current next steps, bugs, and polish tasks.
-
-Optional later:
-
-- `CHANGELOG.md` - Completed changes once the demo stabilizes enough to benefit from a release-style history.
+- `CHANGELOG.md` - Completed work and phase history.
+- `DOC_CHECKLIST.md` - Repeatable documentation review workflow for code, content, and demo changes.
 
 No additional documentation folders are needed right now. Keep these files at the repo root until the docs become large enough to justify a dedicated `docs/` directory.
 
 ## Development Notes
 
 - Read `AGENTS.md` and `CODEX.md` before making code or content changes.
-- Use local TypeScript data files first.
+- Use local TypeScript data files for baseline demo content.
+- Keep interactive demo state browser-local unless a later phase explicitly introduces a different persistence layer.
 - Do not add backend complexity, authentication, or external APIs unless explicitly requested.
 - Keep the demo polished, job-aligned, and clear to a non-technical reviewer.

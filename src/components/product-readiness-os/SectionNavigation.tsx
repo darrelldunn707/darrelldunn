@@ -10,7 +10,7 @@ const sectionLinks = [
   { label: "Support Hub", href: "#support-hub" },
   { label: "Partner View", href: "#partner-view" },
   { label: "Insights", href: "#insights" },
-  { label: "Role Mapping", href: "#demo-mapping" },
+  { label: "Role Mapping", href: "#role-mapping" },
 ];
 
 export function SectionNavigation() {

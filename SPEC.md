@@ -31,8 +31,9 @@ This is a fictional work sample. It is not an OpenAI internal tool.
 
 1. External Partner View
 2. Support Team View
-3. Launch Command Center
+3. Launch Readiness
 4. Product & Engineering View
+5. Role Mapping
 
 ## Capabilities To Demonstrate
 
@@ -43,12 +44,14 @@ This is a fictional work sample. It is not an OpenAI internal tool.
 - Build feedback loops from support and partner signals.
 - Normalize feedback into categories and severity.
 - Route insights to Product and Engineering owners.
+- Convert recurring feedback clusters into department-owned follow-up work.
 - Identify launch risks early.
 - Report readiness and feedback-loop performance.
+- Map demo surfaces to the Product Engagement Specialist role.
 
 ## Data Model
 
-Version 1 uses local TypeScript data only.
+Version 1 uses local TypeScript data for baseline demo content and browser-local `localStorage` state for the OpenLoop live demo session.
 
 Current data areas:
 
@@ -57,8 +60,13 @@ Current data areas:
 - Risk register
 - Support playbook
 - Feedback samples and classifications
+- OpenLoop session records
+- Duplicate cluster summaries
+- Routed tasks derived from active clusters
 - Product insights
 - Partner readiness
+
+The OpenLoop session is front-end only. It persists in the browser so preset clicks, custom feedback ingestion, seeded sample feedback, cluster summaries, routed tasks, and the feedback log can visibly update across refreshes.
 
 ## Non-Goals
 
@@ -73,7 +81,7 @@ Current data areas:
 ## Success Criteria
 
 - The demo is polished, job-aligned, and easy to understand.
-- The experience clearly shows external partner, support, launch command, and product/engineering perspectives.
+- The experience clearly shows external partner, support, launch readiness, and product/engineering perspectives.
 - Content reads like a credible fictional operating system, not a generic template.
 - The UI favors clear operational information over flashy animation.
 - The implementation remains simple enough for a portfolio reviewer to inspect.
