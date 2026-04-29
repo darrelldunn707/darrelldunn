@@ -23,14 +23,191 @@ type OpenLoopSessionRecord = {
   text: string;
   source: SessionSource;
   department: string;
+  createdAt: string;
   ingestedAt: string;
   classification: FeedbackSample["classification"];
+};
+
+type ClusterTrend = "One-off" | "Watching" | "Rising" | "Escalating";
+
+type ClusterSummary = {
+  category: string;
+  clusterName: string;
+  customerSegment: string;
+  totalReports: number;
+  uniqueCustomersAffected: number;
+  severeImpactCount: number;
+  last24hReports: number;
+  trend: ClusterTrend;
+  suggestedOwner: string;
+  prioritySignal: string;
+};
+
+type TaskPriority = "High" | "Medium" | "Low" | "Review";
+
+type RoutedTask = {
+  task: string;
+  department: string;
+  linkedCluster: string;
+  priority: TaskPriority;
+  status: "Open" | "Needs review" | "In progress";
+  sourceSignal: string;
+  totalReports: number;
+  severeImpactCount: number;
+  trend: ClusterTrend;
+};
+
+type SeedClusterProfile = Pick<
+  FeedbackSample["classification"],
+  | "category"
+  | "customerSegment"
+  | "duplicateCluster"
+  | "featureWorkflow"
+  | "issueType"
+  | "likelyOwner"
+  | "prioritySignal"
+  | "recommendedRoute"
+  | "subcategory"
+> & {
+  defaultSeverities: FeedbackSample["classification"]["severity"][];
+  sampleFeedback: string;
+  sourceChannel: string;
 };
 
 const OPENLOOP_SESSION_KEY = "openloopFeedbackSession";
 const FIRST_SESSION_FEEDBACK_ID = 1028;
 const CONFIRMATION_DURATION_MS = 12000;
 const SEED_RECORD_COUNT = 40;
+const seedClusterProfiles: SeedClusterProfile[] = [
+  {
+    duplicateCluster: "Partner training gaps",
+    category: "Partner Enablement",
+    subcategory: "Training readiness",
+    issueType: "Launch readiness gap",
+    likelyOwner: "Partner Success",
+    recommendedRoute: "Partner Success -> Product Ops",
+    customerSegment: "External partners",
+    featureWorkflow: "Partner launch training",
+    defaultSeverities: ["Sev 3", "Sev 4", "Sev 4"],
+    prioritySignal:
+      "Recurring partner enablement gap affecting external support teams during the launch window.",
+    sampleFeedback:
+      "Partner support teams need clearer launch training before answering customer setup questions.",
+    sourceChannel: "Partner escalation",
+  },
+  {
+    duplicateCluster: "SSO setup failures",
+    category: "Authentication / SSO",
+    subcategory: "Authentication setup",
+    issueType: "Launch blocker",
+    likelyOwner: "Identity Engineering",
+    recommendedRoute: "Support -> Identity Engineering escalation",
+    customerSegment: "Enterprise admins using SSO",
+    featureWorkflow: "SSO setup",
+    defaultSeverities: ["Sev 2", "Sev 2", "Sev 3"],
+    prioritySignal:
+      "Recurring SSO setup failure affecting enterprise admins during the launch window.",
+    sampleFeedback:
+      "Enterprise admins report SSO setup failures when connecting the launch workspace.",
+    sourceChannel: "Support ticket",
+  },
+  {
+    duplicateCluster: "Connector permissions confusion",
+    category: "Permissions",
+    subcategory: "Access model clarity",
+    issueType: "Usability / comprehension issue",
+    likelyOwner: "Product Manager",
+    recommendedRoute: "Support -> Product Ops -> Product Manager",
+    customerSegment: "Enterprise admins",
+    featureWorkflow: "Connector permissions",
+    defaultSeverities: ["Sev 3", "Sev 4", "Sev 4"],
+    prioritySignal:
+      "Rising permissions confusion creating setup friction for enterprise admins.",
+    sampleFeedback:
+      "Admins are unsure which workspace permissions are required before connector setup.",
+    sourceChannel: "Launch office hours",
+  },
+  {
+    duplicateCluster: "Billing plan mismatch",
+    category: "Billing",
+    subcategory: "Plan eligibility",
+    issueType: "Operational billing mismatch",
+    likelyOwner: "Billing Ops",
+    recommendedRoute: "Support -> Billing Ops -> Product Ops",
+    customerSegment: "Billing administrators",
+    featureWorkflow: "Plan validation",
+    defaultSeverities: ["Sev 3", "Sev 4", "Sev 4"],
+    prioritySignal:
+      "Billing plan mismatch needs review before broader rollout.",
+    sampleFeedback:
+      "Billing admins see plan eligibility language that does not match launch access.",
+    sourceChannel: "Sales handoff",
+  },
+  {
+    duplicateCluster: "Documentation mismatch",
+    category: "Documentation",
+    subcategory: "Launch documentation accuracy",
+    issueType: "Documentation gap",
+    likelyOwner: "Documentation",
+    recommendedRoute: "Support -> Documentation -> Product review",
+    customerSegment: "Security reviewers and enterprise admins",
+    featureWorkflow: "Setup documentation",
+    defaultSeverities: ["Sev 4", "Sev 4", "Sev 5"],
+    prioritySignal:
+      "Rising documentation mismatch creating avoidable support volume.",
+    sampleFeedback:
+      "Customers report that setup docs and launch FAQs describe different approval steps.",
+    sourceChannel: "Documentation review",
+  },
+  {
+    duplicateCluster: "Policy / Safety review confusion",
+    category: "Policy / Safety",
+    subcategory: "Review path clarity",
+    issueType: "Policy review routing issue",
+    likelyOwner: "Policy / Safety",
+    recommendedRoute: "Support -> Policy / Safety -> Product Ops",
+    customerSegment: "Policy reviewers",
+    featureWorkflow: "Safety review handoff",
+    defaultSeverities: ["Sev 3", "Sev 4", "Sev 4"],
+    prioritySignal:
+      "Policy review routing confusion needs owner clarity before launch expansion.",
+    sampleFeedback:
+      "Policy reviewers need a clearer route for launch safety review questions.",
+    sourceChannel: "Internal QA",
+  },
+  {
+    duplicateCluster: "Voice audio cutoff",
+    category: "Voice",
+    subcategory: "Audio reliability",
+    issueType: "Workflow failure",
+    likelyOwner: "Voice Engineering",
+    recommendedRoute: "Support -> Voice Engineering",
+    customerSegment: "Enterprise pilot users",
+    featureWorkflow: "Voice session playback",
+    defaultSeverities: ["Sev 2", "Sev 3", "Sev 3"],
+    prioritySignal:
+      "Recurring voice audio cutoff affecting enterprise pilot users during launch validation.",
+    sampleFeedback:
+      "Enterprise pilot users report voice audio cutting off during launch validation sessions.",
+    sourceChannel: "Customer success note",
+  },
+  {
+    duplicateCluster: "Admin onboarding confusion",
+    category: "Permissions",
+    subcategory: "Admin setup guidance",
+    issueType: "Onboarding comprehension issue",
+    likelyOwner: "Product Ops",
+    recommendedRoute: "Support -> Product Ops",
+    customerSegment: "Workspace administrators",
+    featureWorkflow: "Admin onboarding",
+    defaultSeverities: ["Sev 4", "Sev 4", "Sev 5"],
+    prioritySignal:
+      "Admin onboarding confusion is creating repeated setup friction across launch accounts.",
+    sampleFeedback:
+      "Workspace administrators are unsure which onboarding step to complete after invite acceptance.",
+    sourceChannel: "Support ticket",
+  },
+];
 
 export function FeedbackClassifier({
   samples,
@@ -186,7 +363,11 @@ export function FeedbackClassifier({
             </div>
 
             <div className="lg:col-span-2">
-              <DedupeTrendCluster sample={selectedSample} />
+              <DedupeTrendCluster records={sessionRecords} />
+            </div>
+
+            <div className="lg:col-span-2">
+              <RoutedTasks records={sessionRecords} />
             </div>
 
             <div className="lg:col-span-2">
@@ -635,24 +816,152 @@ function NormalizedFeedbackRecord({ sample }: { sample: FeedbackSample }) {
   );
 }
 
-function DedupeTrendCluster({ sample }: { sample: FeedbackSample }) {
-  const result = sample.classification;
+function DedupeTrendCluster({
+  records,
+}: {
+  records: OpenLoopSessionRecord[];
+}) {
+  const clusterSummaries = getTopClusterSummaries(records);
 
   return (
     <CompactCard
       title="Dedupe + Trend Cluster"
-      description="Groups repeated reports into one launch signal so duplicate tickets add priority without fragmenting the work."
+      description="Top feedback clusters from this live demo session, grouped from ingested session records."
     >
-      <dl className="grid gap-4 pl-4 text-sm lg:grid-cols-5">
-        <LabeledValue label="Duplicate Cluster" value={result.duplicateCluster} />
-        <LabeledValue label="Similar Reports" value={result.similarReports} />
-        <LabeledValue
-          label="Unique Customers Affected"
-          value={result.uniqueCustomersAffected}
-        />
-        <LabeledValue label="Trend" value={result.trend} />
-        <LabeledValue label="Priority Signal" value={result.prioritySignal} />
-      </dl>
+      {clusterSummaries.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-stone-200">
+                {[
+                  "Cluster",
+                  "Reports",
+                  "Customers",
+                  "Sev 1 / Sev 2",
+                  "Last 24h",
+                  "Trend",
+                  "Suggested Owner",
+                  "Priority Signal",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    className="pb-3 pr-4 font-bold text-stone-900"
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {clusterSummaries.map((cluster) => (
+                <tr
+                  key={cluster.clusterName}
+                  className="border-b border-stone-100 last:border-0"
+                >
+                  <td className="py-3 pr-4 align-top font-bold text-stone-900">
+                    {cluster.clusterName}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {cluster.totalReports}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {cluster.uniqueCustomersAffected}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {cluster.severeImpactCount}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {cluster.last24hReports}
+                  </td>
+                  <td className="py-3 pr-4 align-top font-semibold text-stone-900">
+                    {cluster.trend}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {cluster.suggestedOwner}
+                  </td>
+                  <td className="py-3 align-top leading-6 text-stone-700">
+                    {cluster.prioritySignal}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-sm leading-6 text-stone-600">
+          No active duplicate clusters yet. Ingest feedback or seed sample
+          launch feedback to populate cluster trends.
+        </p>
+      )}
+    </CompactCard>
+  );
+}
+
+function RoutedTasks({ records }: { records: OpenLoopSessionRecord[] }) {
+  const routedTasks = getRoutedTasks(records);
+
+  return (
+    <CompactCard
+      title="Routed Tasks"
+      description="Cluster-level follow-up work assigned to the department best positioned to resolve the signal."
+    >
+      {routedTasks.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-stone-200">
+                {[
+                  "Task",
+                  "Department",
+                  "Linked Cluster",
+                  "Priority",
+                  "Status",
+                  "Source Signal",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    className="pb-3 pr-4 font-bold text-stone-900"
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {routedTasks.map((task) => (
+                <tr
+                  key={task.linkedCluster}
+                  className="border-b border-stone-100 last:border-0"
+                >
+                  <td className="py-3 pr-4 align-top font-bold text-stone-900">
+                    {task.task}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {task.department}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {task.linkedCluster}
+                  </td>
+                  <td className="py-3 pr-4 align-top font-semibold text-stone-900">
+                    {task.priority}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {task.status}
+                  </td>
+                  <td className="py-3 align-top leading-6 text-stone-700">
+                    {task.sourceSignal}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-sm leading-6 text-stone-600">
+          No routed tasks yet. Ingest feedback or seed sample launch feedback
+          to generate cluster-level tasks.
+        </p>
+      )}
     </CompactCard>
   );
 }
@@ -812,23 +1121,6 @@ function CompactCard({
   );
 }
 
-function LabeledValue({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number;
-}) {
-  return (
-    <div>
-      <dt className="text-sm font-bold text-stone-900">
-        {label}
-      </dt>
-      <dd className="mt-1 leading-6 text-stone-700">{value}</dd>
-    </div>
-  );
-}
-
 function readSessionRecords(): OpenLoopSessionRecord[] {
   try {
     const rawRecords = window.localStorage.getItem(OPENLOOP_SESSION_KEY);
@@ -843,7 +1135,7 @@ function readSessionRecords(): OpenLoopSessionRecord[] {
       return [];
     }
 
-    return parsedRecords.filter(isSessionRecord);
+    return parsedRecords.filter(isSessionRecord).map(normalizeSessionRecord);
   } catch {
     return [];
   }
@@ -860,16 +1152,21 @@ function isSessionRecord(record: unknown): record is OpenLoopSessionRecord {
     possibleRecord.sessionId &&
       possibleRecord.text &&
       possibleRecord.source &&
+      possibleRecord.ingestedAt &&
       possibleRecord.classification?.feedbackId,
   );
 }
 
+function normalizeSessionRecord(
+  record: OpenLoopSessionRecord,
+): OpenLoopSessionRecord {
+  return {
+    ...record,
+    createdAt: record.createdAt ?? record.ingestedAt,
+  };
+}
+
 function calculateOpenLoopMetrics(records: OpenLoopSessionRecord[]) {
-  const openClusters = new Set(
-    records
-      .map((record) => record.classification.duplicateCluster)
-      .filter(isMeaningfulCluster),
-  );
   const humanReviewQueue = records.filter((record) =>
     ["yes", "review recommended"].includes(
       record.classification.humanReviewNeeded.toLowerCase(),
@@ -878,8 +1175,8 @@ function calculateOpenLoopMetrics(records: OpenLoopSessionRecord[]) {
 
   return {
     totalIngestedFeedback: records.length,
-    openClusters: openClusters.size,
-    openTasks: records.length,
+    openClusters: getClusterSummaries(records).length,
+    openTasks: getRoutedTasks(records).length,
     humanReviewQueue,
     completedTasks: 0,
   };
@@ -897,7 +1194,435 @@ function isMeaningfulCluster(cluster: string) {
     "no cluster",
     "unclear",
     "unassigned",
+    "needs triage",
   ].some((placeholder) => normalizedCluster.includes(placeholder));
+}
+
+function getTopClusterSummaries(records: OpenLoopSessionRecord[]) {
+  return getClusterSummaries(records).slice(0, 5);
+}
+
+function getClusterSummaries(records: OpenLoopSessionRecord[]): ClusterSummary[] {
+  const groupedRecords = records.reduce<Record<string, OpenLoopSessionRecord[]>>(
+    (groups, record) => {
+      const clusterName = record.classification.duplicateCluster.trim();
+
+      if (!isMeaningfulCluster(clusterName)) {
+        return groups;
+      }
+
+      groups[clusterName] = [...(groups[clusterName] ?? []), record];
+      return groups;
+    },
+    {},
+  );
+
+  return Object.entries(groupedRecords)
+    .map(([clusterName, clusterRecords]) =>
+      buildClusterSummary(clusterName, clusterRecords),
+    )
+    .sort((firstCluster, secondCluster) => {
+      if (secondCluster.totalReports !== firstCluster.totalReports) {
+        return secondCluster.totalReports - firstCluster.totalReports;
+      }
+
+      return secondCluster.severeImpactCount - firstCluster.severeImpactCount;
+    });
+}
+
+function buildClusterSummary(
+  clusterName: string,
+  records: OpenLoopSessionRecord[],
+): ClusterSummary {
+  const totalReports = records.length;
+  const severeImpactCount = records.filter((record) =>
+    ["Sev 1", "Sev 2"].includes(record.classification.severity),
+  ).length;
+  const last24hReports = records.filter((record) =>
+    isWithinLastHours(record.createdAt ?? record.ingestedAt, 24),
+  ).length;
+  const uniqueCustomersAffected = Math.max(
+    ...records.map((record) => record.classification.uniqueCustomersAffected),
+    getUniqueValueCount(
+      records.map((record) => record.classification.customerSegment),
+    ),
+  );
+  const suggestedOwner =
+    getMostCommonValue(records.map((record) => record.classification.likelyOwner)) ??
+    "Product Ops triage";
+  const explicitPrioritySignal =
+    getSeedClusterProfile(clusterName)?.prioritySignal ??
+    getMostCommonValue(records.map((record) => record.classification.prioritySignal));
+  const category =
+    getMostCommonValue(records.map((record) => record.classification.category)) ??
+    "Needs triage";
+  const customerSegment =
+    getMostCommonValue(
+      records.map((record) => record.classification.customerSegment),
+    ) ?? "affected users";
+  const trend = getClusterTrend(totalReports, severeImpactCount, last24hReports);
+
+  return {
+    category,
+    clusterName,
+    customerSegment,
+    totalReports,
+    uniqueCustomersAffected,
+    severeImpactCount,
+    last24hReports,
+    trend,
+    suggestedOwner,
+    prioritySignal: buildPrioritySignal(
+      category,
+      customerSegment,
+      trend,
+      severeImpactCount,
+      explicitPrioritySignal,
+    ),
+  };
+}
+
+function getClusterTrend(
+  totalReports: number,
+  severeImpactCount: number,
+  last24hReports: number,
+): ClusterTrend {
+  if (
+    (totalReports >= 6 && severeImpactCount > 0) ||
+    last24hReports >= 4
+  ) {
+    return "Escalating";
+  }
+
+  if (totalReports >= 4 || last24hReports >= 2) {
+    return "Rising";
+  }
+
+  if (totalReports >= 2) {
+    return "Watching";
+  }
+
+  return "One-off";
+}
+
+function buildPrioritySignal(
+  category: string,
+  customerSegment: string,
+  trend: ClusterTrend,
+  severeImpactCount: number,
+  explicitPrioritySignal?: string,
+) {
+  if (explicitPrioritySignal) {
+    return explicitPrioritySignal;
+  }
+
+  const normalizedCategory = category.toLowerCase();
+
+  if (severeImpactCount > 0) {
+    return `Recurring ${category} issue affecting ${customerSegment} during the launch window.`;
+  }
+
+  if (normalizedCategory.includes("documentation")) {
+    return `${trend} documentation issue creating support volume.`;
+  }
+
+  if (normalizedCategory.includes("partner")) {
+    return `Partner onboarding friction is ${trend.toLowerCase()} across recent feedback.`;
+  }
+
+  if (normalizedCategory.includes("billing")) {
+    return "Billing cluster needs review before broader rollout.";
+  }
+
+  return `${trend} ${category} cluster needs owner review and launch follow-up.`;
+}
+
+function getRoutedTasks(records: OpenLoopSessionRecord[]) {
+  return getClusterSummaries(records)
+    .map(buildRoutedTask)
+    .sort((firstTask, secondTask) => {
+      const priorityDifference =
+        getPriorityWeight(secondTask.priority) -
+        getPriorityWeight(firstTask.priority);
+
+      if (priorityDifference !== 0) {
+        return priorityDifference;
+      }
+
+      const trendDifference =
+        getTrendWeight(secondTask.trend) - getTrendWeight(firstTask.trend);
+
+      if (trendDifference !== 0) {
+        return trendDifference;
+      }
+
+      if (secondTask.totalReports !== firstTask.totalReports) {
+        return secondTask.totalReports - firstTask.totalReports;
+      }
+
+      return secondTask.severeImpactCount - firstTask.severeImpactCount;
+    })
+    .slice(0, 7);
+}
+
+function buildRoutedTask(cluster: ClusterSummary): RoutedTask {
+  const profile = getSeedClusterProfile(cluster.clusterName);
+  const priority = getTaskPriority(cluster);
+
+  return {
+    task: getTaskTitle(cluster, profile),
+    department: getTaskDepartment(cluster, profile),
+    linkedCluster: cluster.clusterName,
+    priority,
+    status: getTaskStatus(priority, cluster.trend),
+    sourceSignal: getTaskSourceSignal(cluster, profile),
+    totalReports: cluster.totalReports,
+    severeImpactCount: cluster.severeImpactCount,
+    trend: cluster.trend,
+  };
+}
+
+function getTaskTitle(
+  cluster: ClusterSummary,
+  profile: SeedClusterProfile | undefined,
+) {
+  if (profile?.duplicateCluster === "Partner training gaps") {
+    return "Update partner training materials and confirm launch guidance";
+  }
+
+  if (profile?.duplicateCluster === "SSO setup failures") {
+    return "Investigate SSO setup failures and confirm auth configuration path";
+  }
+
+  if (profile?.duplicateCluster === "Connector permissions confusion") {
+    return "Clarify connector permission requirements and route setup friction to owner";
+  }
+
+  if (profile?.duplicateCluster === "Billing plan mismatch") {
+    return "Review billing plan mapping and update support escalation guidance";
+  }
+
+  if (profile?.duplicateCluster === "Documentation mismatch") {
+    return "Update launch docs to match current product behavior";
+  }
+
+  if (profile?.duplicateCluster === "Policy / Safety review confusion") {
+    return "Clarify safety review guidance and escalation rules";
+  }
+
+  if (profile?.duplicateCluster === "Voice audio cutoff") {
+    return "Investigate session interruption reports and affected device patterns";
+  }
+
+  if (profile?.duplicateCluster === "Admin onboarding confusion") {
+    return "Review onboarding friction and update launch readiness checklist";
+  }
+
+  return `Review ${cluster.clusterName} and assign follow-up owner`;
+}
+
+function getTaskDepartment(
+  cluster: ClusterSummary,
+  profile: SeedClusterProfile | undefined,
+) {
+  if (profile?.category === "Authentication / SSO" || profile?.category === "Voice") {
+    return "Engineering";
+  }
+
+  if (profile?.category === "Partner Enablement") {
+    return "Partner Success";
+  }
+
+  if (profile?.category === "Billing") {
+    return "Billing Ops";
+  }
+
+  if (profile?.category === "Documentation") {
+    return "Documentation";
+  }
+
+  if (profile?.category === "Policy / Safety") {
+    return "Policy / Safety";
+  }
+
+  if (profile?.category === "Permissions") {
+    return "Product Ops";
+  }
+
+  return normalizeDepartment(cluster.suggestedOwner);
+}
+
+function normalizeDepartment(owner: string) {
+  const normalizedOwner = owner.toLowerCase();
+
+  if (
+    normalizedOwner.includes("engineering") ||
+    normalizedOwner.includes("identity") ||
+    normalizedOwner.includes("voice")
+  ) {
+    return "Engineering";
+  }
+
+  if (normalizedOwner.includes("partner")) {
+    return "Partner Success";
+  }
+
+  if (normalizedOwner.includes("policy") || normalizedOwner.includes("safety")) {
+    return "Policy / Safety";
+  }
+
+  if (normalizedOwner.includes("billing")) {
+    return "Billing Ops";
+  }
+
+  if (normalizedOwner.includes("documentation")) {
+    return "Documentation";
+  }
+
+  if (normalizedOwner.includes("support")) {
+    return "Support";
+  }
+
+  return "Product Ops";
+}
+
+function getTaskPriority(cluster: ClusterSummary): TaskPriority {
+  const normalizedCategory = cluster.category.toLowerCase();
+  const normalizedSegment = cluster.customerSegment.toLowerCase();
+
+  if (normalizedCategory.includes("triage")) {
+    return "Review";
+  }
+
+  if (
+    cluster.trend === "Escalating" ||
+    cluster.severeImpactCount > 0 ||
+    normalizedSegment.includes("enterprise") ||
+    normalizedSegment.includes("partner")
+  ) {
+    return "High";
+  }
+
+  if (cluster.trend === "Rising") {
+    return "Medium";
+  }
+
+  if (cluster.trend === "Watching") {
+    return "Low";
+  }
+
+  return "Low";
+}
+
+function getTaskStatus(priority: TaskPriority, trend: ClusterTrend) {
+  if (priority === "Review") {
+    return "Needs review";
+  }
+
+  if (priority === "High" || trend === "Escalating") {
+    return "In progress";
+  }
+
+  return "Open";
+}
+
+function getTaskSourceSignal(
+  cluster: ClusterSummary,
+  profile: SeedClusterProfile | undefined,
+) {
+  if (profile?.duplicateCluster === "Partner training gaps") {
+    return "Partner enablement gap is recurring during the launch window";
+  }
+
+  if (profile?.duplicateCluster === "SSO setup failures") {
+    return "Authentication issue is blocking launch-critical setup";
+  }
+
+  if (profile?.duplicateCluster === "Connector permissions confusion") {
+    return "Admins are repeatedly confused by connector access requirements";
+  }
+
+  if (profile?.duplicateCluster === "Billing plan mismatch") {
+    return "Billing mismatch is creating support and trust risk";
+  }
+
+  if (profile?.duplicateCluster === "Documentation mismatch") {
+    return "Documentation mismatch is increasing support volume";
+  }
+
+  if (profile?.duplicateCluster === "Policy / Safety review confusion") {
+    return "Review uncertainty requires policy alignment";
+  }
+
+  if (profile?.duplicateCluster === "Voice audio cutoff") {
+    return "Reliability issue is recurring across recent reports";
+  }
+
+  if (profile?.duplicateCluster === "Admin onboarding confusion") {
+    return "Admin setup confusion may slow enterprise rollout";
+  }
+
+  return cluster.prioritySignal;
+}
+
+function getPriorityWeight(priority: TaskPriority) {
+  const weights: Record<TaskPriority, number> = {
+    High: 4,
+    Medium: 3,
+    Low: 2,
+    Review: 1,
+  };
+
+  return weights[priority];
+}
+
+function getTrendWeight(trend: ClusterTrend) {
+  const weights: Record<ClusterTrend, number> = {
+    Escalating: 4,
+    Rising: 3,
+    Watching: 2,
+    "One-off": 1,
+  };
+
+  return weights[trend];
+}
+
+function isWithinLastHours(dateValue: string, hours: number) {
+  const timestamp = new Date(dateValue).getTime();
+
+  if (!Number.isFinite(timestamp)) {
+    return false;
+  }
+
+  return Date.now() - timestamp <= hours * 60 * 60 * 1000;
+}
+
+function getUniqueValueCount(values: string[]) {
+  return new Set(values.map((value) => value.trim()).filter(Boolean)).size;
+}
+
+function getMostCommonValue(values: string[]) {
+  const counts = values.reduce<Record<string, number>>((valueCounts, value) => {
+    const normalizedValue = value.trim();
+
+    if (!normalizedValue) {
+      return valueCounts;
+    }
+
+    valueCounts[normalizedValue] = (valueCounts[normalizedValue] ?? 0) + 1;
+    return valueCounts;
+  }, {});
+
+  return Object.entries(counts).sort(
+    ([, firstCount], [, secondCount]) => secondCount - firstCount,
+  )[0]?.[0];
+}
+
+function getSeedClusterProfile(clusterName: string) {
+  return seedClusterProfiles.find(
+    (profile) =>
+      profile.duplicateCluster.toLowerCase() === clusterName.toLowerCase(),
+  );
 }
 
 function getNextFeedbackId(records: OpenLoopSessionRecord[]) {
@@ -935,12 +1660,15 @@ function createSessionRecord(
   source: SessionSource,
   department: string,
 ): OpenLoopSessionRecord {
+  const createdAt = new Date().toISOString();
+
   return {
     sessionId: `${sample.classification.feedbackId}-${Date.now()}`,
     text: sample.text,
     source,
     department,
-    ingestedAt: new Date().toISOString(),
+    createdAt,
+    ingestedAt: createdAt,
     classification: sample.classification,
   };
 }
@@ -977,40 +1705,6 @@ function buildSeedSessionRecords(
     return [];
   }
 
-  const departments = [
-    "Product Ops",
-    "Engineering",
-    "Support",
-    "Partner Success",
-    "Policy / Safety",
-    "Billing Ops",
-    "Documentation",
-  ];
-  const sourceChannels = [
-    "Support ticket",
-    "Partner escalation",
-    "Launch office hours",
-    "Sales handoff",
-    "Customer success note",
-    "Internal QA",
-    "Documentation review",
-  ];
-  const customerSegments = [
-    "Enterprise admins",
-    "External partner support teams",
-    "Security reviewers",
-    "Pilot workspace owners",
-    "Billing administrators",
-    "Customer success managers",
-    "Policy reviewers",
-  ];
-  const severities: FeedbackSample["classification"]["severity"][] = [
-    "Sev 2",
-    "Sev 3",
-    "Sev 4",
-    "Sev 4",
-    "Sev 5",
-  ];
   const humanReviewStatuses = [
     "No",
     "No",
@@ -1022,13 +1716,18 @@ function buildSeedSessionRecords(
     Number(getNextFeedbackId(existingRecords).replace("FB-", "")) || FIRST_SESSION_FEEDBACK_ID;
 
   return Array.from({ length: SEED_RECORD_COUNT }, (_, index) => {
-    const baseSample = samples[index % samples.length];
-    const department = departments[index % departments.length];
+    const profile = seedClusterProfiles[index % seedClusterProfiles.length];
+    const baseSample =
+      samples.find((sample) => sample.classification.category === profile.category) ??
+      samples[index % samples.length];
+    const department = profile.likelyOwner;
     const feedbackId = `FB-${firstSeedIdNumber + index}`;
-    const severity = severities[index % severities.length];
+    const severity =
+      profile.defaultSeverities[index % profile.defaultSeverities.length];
     const humanReviewNeeded = humanReviewStatuses[
       index % humanReviewStatuses.length
     ];
+    const createdAt = getSeedCreatedAt(now, index);
     const confidenceScore =
       humanReviewNeeded === "Yes"
         ? 58
@@ -1040,20 +1739,26 @@ function buildSeedSessionRecords(
     const sessionSample: FeedbackSample = {
       ...baseSample,
       id: `${baseSample.id}-seed-${index}`,
-      text: `${sourceChannels[index % sourceChannels.length]}: ${baseSample.text}`,
+      text: `${profile.sourceChannel}: ${profile.sampleFeedback}`,
       classification: {
         ...baseSample.classification,
+        category: profile.category,
         confidenceLevel,
         confidenceScore,
         createdFrom: "Seed sample launch feedback",
-        customerSegment: customerSegments[index % customerSegments.length],
-        duplicateCluster: `${baseSample.classification.category} cluster ${index % 6 + 1}`,
+        customerSegment: profile.customerSegment,
+        duplicateCluster: profile.duplicateCluster,
+        featureWorkflow: profile.featureWorkflow,
         feedbackId,
         humanReviewNeeded,
-        likelyOwner: department,
+        issueType: profile.issueType,
+        likelyOwner: profile.likelyOwner,
+        prioritySignal: profile.prioritySignal,
+        recommendedRoute: profile.recommendedRoute,
         severity,
-        sourceChannel: sourceChannels[index % sourceChannels.length],
+        sourceChannel: profile.sourceChannel,
         status: humanReviewNeeded === "Yes" ? "Needs review" : "Routed",
+        subcategory: profile.subcategory,
       },
     };
 
@@ -1062,8 +1767,21 @@ function buildSeedSessionRecords(
       text: sessionSample.text,
       source: "Seed sample launch feedback" as const,
       department,
-      ingestedAt: new Date(now + index * 1000).toISOString(),
+      createdAt,
+      ingestedAt: createdAt,
       classification: sessionSample.classification,
     };
   });
+}
+
+function getSeedCreatedAt(now: number, index: number) {
+  const hour = 60 * 60 * 1000;
+  const offsetHours =
+    index % 5 === 0
+      ? 2 + (index % 4)
+      : index % 3 === 0
+        ? 12 + (index % 8)
+        : 26 + (index % 46);
+
+  return new Date(now - offsetHours * hour).toISOString();
 }

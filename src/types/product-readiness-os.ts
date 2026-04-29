@@ -19,7 +19,11 @@ export type FeedbackCategory =
   | "Permissions"
   | "Authentication / SSO"
   | "Documentation"
+  | "Partner Enablement"
   | "Partner Operations"
+  | "Billing"
+  | "Policy / Safety"
+  | "Voice"
   | "Needs triage"
   | "General / Needs Review";
 
