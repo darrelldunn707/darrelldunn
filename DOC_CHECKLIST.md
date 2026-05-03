@@ -14,6 +14,7 @@ Check for:
 
 - New or changed demo behavior
 - Changed metrics, labels, sections, or interactions
+- Changes that affect phase history, session persistence, routed task generation, or task completion meaning
 - Completed work that should move out of `TODO.md`
 
 ## Architecture or Data Flow Changed?

@@ -4,6 +4,7 @@ import type {
   OpenLoopRoutedTask,
   OpenLoopSeedClusterProfile,
   OpenLoopSessionRecord,
+  OpenLoopTaskCompletionRecord,
   OpenLoopTaskPriority,
 } from "../../types/product-readiness-os";
 import { getClusterSummaries } from "./openloop-clusters";
@@ -42,10 +43,12 @@ function buildRoutedTask(
 ): OpenLoopRoutedTask {
   const profile = getSeedClusterProfile(cluster.clusterName);
   const priority = getTaskPriority(cluster);
+  const department = getTaskDepartment(cluster, profile);
 
   return {
+    taskId: getRoutedTaskId(cluster.clusterName, department),
     task: getTaskTitle(cluster, profile),
-    department: getTaskDepartment(cluster, profile),
+    department,
     linkedCluster: cluster.clusterName,
     priority,
     status: getTaskStatus(priority, cluster.trend),
@@ -54,6 +57,34 @@ function buildRoutedTask(
     severeImpactCount: cluster.severeImpactCount,
     trend: cluster.trend,
   };
+}
+
+export function applyTaskCompletions(
+  tasks: OpenLoopRoutedTask[],
+  completions: OpenLoopTaskCompletionRecord[],
+): OpenLoopRoutedTask[] {
+  const completionsByTaskId = new Map(
+    completions.map((completion) => [completion.taskId, completion]),
+  );
+
+  return tasks.map((task) => {
+    const completion = completionsByTaskId.get(task.taskId);
+
+    if (!completion) {
+      return task;
+    }
+
+    return {
+      ...task,
+      status: "Completed",
+      completedAt: completion.completedAt,
+      completionImpact: completion.completionImpact,
+    };
+  });
+}
+
+export function getRoutedTaskId(clusterName: string, department: string) {
+  return `task-${slugify(clusterName)}-${slugify(department)}`;
 }
 
 function getTaskTitle(
@@ -264,4 +295,12 @@ function getTrendWeight(trend: OpenLoopClusterTrend) {
   };
 
   return weights[trend];
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }

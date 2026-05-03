@@ -1,11 +1,14 @@
 import type {
   FeedbackClassification,
   FeedbackSample,
+  OpenLoopRoutedTask,
   OpenLoopSessionRecord,
   OpenLoopSessionSource,
+  OpenLoopTaskCompletionRecord,
 } from "../../types/product-readiness-os";
 
 export const OPENLOOP_SESSION_KEY = "openloopFeedbackSession";
+export const OPENLOOP_TASK_SESSION_KEY = "openloopTaskSession";
 
 const FIRST_SESSION_FEEDBACK_ID = 1028;
 
@@ -34,11 +37,56 @@ export function readOpenLoopSessionRecords(): OpenLoopSessionRecord[] {
 export function writeOpenLoopSessionRecords(
   records: OpenLoopSessionRecord[],
 ) {
+  if (records.length === 0) {
+    clearOpenLoopSessionRecords();
+    return;
+  }
+
   window.localStorage.setItem(OPENLOOP_SESSION_KEY, JSON.stringify(records));
 }
 
 export function clearOpenLoopSessionRecords() {
   window.localStorage.removeItem(OPENLOOP_SESSION_KEY);
+}
+
+export function readOpenLoopTaskCompletions(): OpenLoopTaskCompletionRecord[] {
+  try {
+    const rawRecords = window.localStorage.getItem(OPENLOOP_TASK_SESSION_KEY);
+
+    if (!rawRecords) {
+      return [];
+    }
+
+    const parsedRecords = JSON.parse(rawRecords);
+
+    if (!Array.isArray(parsedRecords)) {
+      return [];
+    }
+
+    return parsedRecords
+      .filter(isOpenLoopTaskCompletionRecord)
+      .map(normalizeTaskCompletionRecord);
+  } catch {
+    return [];
+  }
+}
+
+export function writeOpenLoopTaskCompletions(
+  records: OpenLoopTaskCompletionRecord[],
+) {
+  if (records.length === 0) {
+    clearOpenLoopTaskCompletions();
+    return;
+  }
+
+  window.localStorage.setItem(
+    OPENLOOP_TASK_SESSION_KEY,
+    JSON.stringify(records),
+  );
+}
+
+export function clearOpenLoopTaskCompletions() {
+  window.localStorage.removeItem(OPENLOOP_TASK_SESSION_KEY);
 }
 
 export function getNextFeedbackId(records: OpenLoopSessionRecord[]) {
@@ -86,6 +134,19 @@ export function createSessionRecord(
     createdAt,
     ingestedAt: createdAt,
     classification: sample.classification,
+  };
+}
+
+export function createTaskCompletionRecord(
+  task: OpenLoopRoutedTask,
+): OpenLoopTaskCompletionRecord {
+  return {
+    taskId: task.taskId,
+    linkedCluster: task.linkedCluster,
+    department: task.department,
+    status: "Completed",
+    completedAt: new Date().toISOString(),
+    completionImpact: getTaskCompletionImpact(task),
   };
 }
 
@@ -138,4 +199,38 @@ function normalizeSessionRecord(
     ...record,
     createdAt: record.createdAt ?? record.ingestedAt,
   };
+}
+
+function isOpenLoopTaskCompletionRecord(
+  record: unknown,
+): record is OpenLoopTaskCompletionRecord {
+  if (!record || typeof record !== "object") {
+    return false;
+  }
+
+  const possibleRecord = record as Partial<OpenLoopTaskCompletionRecord>;
+
+  return Boolean(
+    possibleRecord.taskId &&
+      possibleRecord.linkedCluster &&
+      possibleRecord.department &&
+      possibleRecord.status === "Completed" &&
+      possibleRecord.completedAt,
+  );
+}
+
+function normalizeTaskCompletionRecord(
+  record: OpenLoopTaskCompletionRecord,
+): OpenLoopTaskCompletionRecord {
+  return {
+    ...record,
+    status: "Completed",
+    completionImpact:
+      record.completionImpact ??
+      `Operational follow-up completed for ${record.linkedCluster}.`,
+  };
+}
+
+function getTaskCompletionImpact(task: OpenLoopRoutedTask) {
+  return `${task.department} completed operational follow-up for ${task.linkedCluster}. Continue monitoring future reports before treating the product issue as resolved.`;
 }

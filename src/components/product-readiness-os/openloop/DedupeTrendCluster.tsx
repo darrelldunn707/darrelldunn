@@ -1,13 +1,21 @@
 import { getTopClusterSummaries } from "../../../lib/product-readiness-os/openloop-clusters";
-import type { OpenLoopSessionRecord } from "../../../types/product-readiness-os";
+import type {
+  OpenLoopSessionRecord,
+  OpenLoopTaskCompletionRecord,
+} from "../../../types/product-readiness-os";
 import { OpenLoopCard } from "./OpenLoopCard";
 
 export function DedupeTrendCluster({
   records,
+  taskCompletions,
 }: {
   records: OpenLoopSessionRecord[];
+  taskCompletions: OpenLoopTaskCompletionRecord[];
 }) {
   const clusterSummaries = getTopClusterSummaries(records);
+  const completedClusters = new Set(
+    taskCompletions.map((completion) => completion.linkedCluster),
+  );
 
   return (
     <OpenLoopCard
@@ -16,7 +24,7 @@ export function DedupeTrendCluster({
     >
       {clusterSummaries.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[1050px] border-collapse text-left text-sm">
             <thead>
               <tr className="border-b border-stone-200">
                 {[
@@ -26,6 +34,7 @@ export function DedupeTrendCluster({
                   "Sev 1 / Sev 2",
                   "Last 24h",
                   "Trend",
+                  "Operational Status",
                   "Suggested Owner",
                   "Priority Signal",
                 ].map((header) => (
@@ -61,6 +70,11 @@ export function DedupeTrendCluster({
                   </td>
                   <td className="py-3 pr-4 align-top font-semibold text-stone-900">
                     {cluster.trend}
+                  </td>
+                  <td className="py-3 pr-4 align-top text-stone-700">
+                    {completedClusters.has(cluster.clusterName)
+                      ? "Monitoring"
+                      : "Open"}
                   </td>
                   <td className="py-3 pr-4 align-top text-stone-700">
                     {cluster.suggestedOwner}

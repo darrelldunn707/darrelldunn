@@ -161,6 +161,7 @@ export type OpenLoopClusterSummary = {
   category: string;
   clusterName: string;
   customerSegment: string;
+  operationalStatus?: OpenLoopClusterOperationalStatus;
   totalReports: number;
   uniqueCustomersAffected: number;
   severeImpactCount: number;
@@ -172,16 +173,40 @@ export type OpenLoopClusterSummary = {
 
 export type OpenLoopTaskPriority = "High" | "Medium" | "Low" | "Review";
 
+export type OpenLoopTaskStatus =
+  | "Open"
+  | "Needs review"
+  | "In progress"
+  | "Completed";
+
+export type OpenLoopClusterOperationalStatus =
+  | "Open"
+  | "In progress"
+  | "Mitigated"
+  | "Monitoring";
+
 export type OpenLoopRoutedTask = {
+  taskId: string;
   task: string;
   department: string;
   linkedCluster: string;
   priority: OpenLoopTaskPriority;
-  status: "Open" | "Needs review" | "In progress";
+  status: OpenLoopTaskStatus;
+  completedAt?: string;
+  completionImpact?: string;
   sourceSignal: string;
   totalReports: number;
   severeImpactCount: number;
   trend: OpenLoopClusterTrend;
+};
+
+export type OpenLoopTaskCompletionRecord = {
+  taskId: string;
+  linkedCluster: string;
+  department: string;
+  status: "Completed";
+  completedAt: string;
+  completionImpact: string;
 };
 
 export type OpenLoopSeedClusterProfile = Pick<

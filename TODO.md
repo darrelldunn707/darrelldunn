@@ -17,6 +17,6 @@ This file tracks active work only. Completed work should be removed or moved to 
 
 ## Backlog
 
-- Phase 5: Add the Complete Task loop after the routed task model is ready to update Open Tasks, Completed Tasks, cluster status, risk status, launch readiness impact, Support Hub updates, and Product / Engineering Insight updates.
+- Later Phase 5B: Consider page-wide synchronization from completed OpenLoop tasks into Launch Readiness, Risks, Support Hub, and Insights. Keep task completion scoped to operational follow-up, not underlying product issue resolution.
 - Consider screenshots or a short walkthrough only if they help reviewers understand the demo faster.
 - Revisit whether a `docs/` directory is needed after the documentation set grows.

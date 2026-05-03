@@ -1,13 +1,45 @@
-import type { FeedbackSample } from "../../../types/product-readiness-os";
+import type {
+  FeedbackSample,
+  OpenLoopTaskCompletionRecord,
+} from "../../../types/product-readiness-os";
 import { OpenLoopCard } from "./OpenLoopCard";
 
-export function DashboardImpactPreview({ sample }: { sample: FeedbackSample }) {
+export function DashboardImpactPreview({
+  sample,
+  taskCompletions,
+}: {
+  sample: FeedbackSample;
+  taskCompletions: OpenLoopTaskCompletionRecord[];
+}) {
   const impact = sample.classification.dashboardImpact;
+  const completedCount = taskCompletions.length;
+  const completedText =
+    completedCount === 1 ? "1 routed task" : `${completedCount} routed tasks`;
   const cards = [
-    ["Launch Readiness Impact", impact.launchReadinessImpact],
-    ["Risk Register Update", impact.riskRegisterUpdate],
-    ["Support Hub Update", impact.supportHubUpdate],
-    ["Product / Engineering Insight", impact.productEngineeringInsight],
+    [
+      "Launch Readiness Impact",
+      completedCount > 0
+        ? `Follow-up completed for ${completedText}; readiness impact should be monitored against new feedback volume.`
+        : impact.launchReadinessImpact,
+    ],
+    [
+      "Risk Register Update",
+      completedCount > 0
+        ? "Related risk follow-up moved to monitoring inside OpenLoop; the underlying product issue is not automatically resolved."
+        : impact.riskRegisterUpdate,
+    ],
+    [
+      "Support Hub Update",
+      completedCount > 0
+        ? "Support guidance follow-up completed for routed operational work; continue collecting new report patterns."
+        : impact.supportHubUpdate,
+    ],
+    [
+      "Product / Engineering Insight",
+      completedCount > 0
+        ? "Owner follow-up completed; monitor future reports before treating the product signal as resolved."
+        : impact.productEngineeringInsight,
+    ],
   ];
 
   return (
