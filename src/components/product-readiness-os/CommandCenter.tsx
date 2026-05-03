@@ -22,12 +22,22 @@ export function CommandCenter({
   readinessScore: number;
 }) {
   const statusCounts = countReadinessStatuses(groups);
-  const { metrics, routedTasks } = useOpenLoop();
+  const { clusterSummaries, metrics, routedTasks } = useOpenLoop();
   const completedTasks = routedTasks.filter((task) => task.status === "Completed");
+  const completedClusterNames = new Set(
+    completedTasks.map((task) => task.linkedCluster),
+  );
   const monitoringClusters = [
-    ...new Set(completedTasks.map((task) => task.linkedCluster)),
+    ...completedClusterNames,
   ];
+  const severeOpenClusters = clusterSummaries.filter(
+    (cluster) =>
+      cluster.severeImpactCount > 0 &&
+      !completedClusterNames.has(cluster.clusterName),
+  ).length;
   const hasCompletedFollowUps = completedTasks.length > 0;
+  const defaultOpenLoopNote =
+    "OpenLoop: no completed operational follow-ups yet.";
 
   return (
     <section id="command-center" className="scroll-mt-20 bg-stone-50">
@@ -43,21 +53,45 @@ export function CommandCenter({
             label="Readiness score"
             value={`${readinessScore}%`}
             helper="Calculated from checklist completion."
+            openLoopNote={
+              hasCompletedFollowUps
+                ? `OpenLoop: ${formatCount(metrics.completedTasks, "operational follow-up")} completed; base checklist unchanged.`
+                : defaultOpenLoopNote
+            }
           />
           <MetricCard
             label="At risk"
             value={statusCounts["At Risk"]}
             helper="Items likely to need owner follow-up."
+            openLoopNote={
+              metrics.openClusters > 0
+                ? `OpenLoop: ${formatCount(metrics.openClusters, "open cluster")} still need owner attention.`
+                : hasCompletedFollowUps
+                  ? "OpenLoop: detected clusters moved into monitoring; base count unchanged."
+                  : defaultOpenLoopNote
+            }
           />
           <MetricCard
             label="Blocked"
             value={statusCounts.Blocked}
             helper="Items that need escalation or a decision."
+            openLoopNote={
+              severeOpenClusters > 0
+                ? `OpenLoop: ${formatCount(severeOpenClusters, "severe cluster")} remain under monitoring.`
+                : hasCompletedFollowUps
+                  ? "OpenLoop: severe routed follow-ups are in monitoring; base count unchanged."
+                  : defaultOpenLoopNote
+            }
           />
           <MetricCard
             label="Complete"
             value={statusCounts.Complete}
-            helper="Items ready for launch review."
+            helper="Items marked complete in the baseline checklist."
+            openLoopNote={
+              hasCompletedFollowUps
+                ? `OpenLoop: ${formatCount(metrics.completedTasks, "operational follow-up")} completed; static count unchanged.`
+                : defaultOpenLoopNote
+            }
           />
         </div>
 
@@ -140,4 +174,8 @@ export function CommandCenter({
       </div>
     </section>
   );
+}
+
+function formatCount(count: number, singularLabel: string) {
+  return `${count} ${singularLabel}${count === 1 ? "" : "s"}`;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import type { SupportPlaybook } from "../../types/product-readiness-os";
-import { SectionHeading } from "./DashboardPrimitives";
+import { OpenLoopNote, SectionHeading } from "./DashboardPrimitives";
 import { OpenLoopSignalCard } from "./openloop/OpenLoopSignalCard";
 import { useOpenLoop } from "./openloop/OpenLoopProvider";
 
@@ -17,6 +17,7 @@ export function SupportEnablementHub({
   playbook: SupportPlaybook;
 }) {
   const { routedTasks } = useOpenLoop();
+  const completedTasks = routedTasks.filter((task) => task.status === "Completed");
   const completedSupportTasks = routedTasks.filter(
     (task) =>
       task.status === "Completed" &&
@@ -28,6 +29,20 @@ export function SupportEnablementHub({
       supportSignalDepartments.has(task.department),
   );
   const hasCompletedFollowUps = completedSupportTasks.length > 0;
+  const completedSupportCount = getCompletedDepartmentCount(
+    completedSupportTasks,
+    "Support",
+  );
+  const completedDocumentationCount = getCompletedDepartmentCount(
+    completedSupportTasks,
+    "Documentation",
+  );
+  const completedPartnerCount = getCompletedDepartmentCount(
+    completedSupportTasks,
+    "Partner Success",
+  );
+  const defaultOpenLoopNote =
+    "OpenLoop: no completed operational follow-ups yet.";
 
   return (
     <section id="support-hub" className="scroll-mt-20 bg-stone-50">
@@ -75,6 +90,11 @@ export function SupportEnablementHub({
           <p className="mt-3 text-sm leading-6 text-stone-700">
             {playbook.summary}
           </p>
+          <OpenLoopNote>
+            {hasCompletedFollowUps
+              ? `OpenLoop: ${formatCount(completedSupportTasks.length, "support, documentation, or partner follow-up")} completed; source playbook content unchanged.`
+              : defaultOpenLoopNote}
+          </OpenLoopNote>
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -98,6 +118,11 @@ export function SupportEnablementHub({
             <h3 className="text-lg font-semibold text-stone-900">
               Internal support macros
             </h3>
+            <OpenLoopNote>
+              {completedSupportCount > 0
+                ? `OpenLoop: support guidance follow-up completed for ${formatCount(completedSupportCount, "routed task")}.`
+                : defaultOpenLoopNote}
+            </OpenLoopNote>
             <div className="mt-4 space-y-4">
               {playbook.macros.map((macro) => (
                 <div key={macro.title} className="border-t border-stone-200 pt-4 first:border-t-0 first:pt-0">
@@ -120,6 +145,11 @@ export function SupportEnablementHub({
             <h3 className="text-lg font-semibold text-stone-900">
               Escalation matrix
             </h3>
+            <OpenLoopNote>
+              {completedTasks.length > 0
+                ? `OpenLoop: escalation follow-up completed for ${formatCount(completedTasks.length, "routed task")}; escalation path not marked final.`
+                : defaultOpenLoopNote}
+            </OpenLoopNote>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
@@ -143,10 +173,25 @@ export function SupportEnablementHub({
           </div>
 
           <div className="space-y-6">
-            <ListCard title="Known limitations" items={playbook.knownLimitations} />
+            <ListCard
+              title="Known limitations"
+              items={playbook.knownLimitations}
+              openLoopNote={
+                openSupportTasks.length > 0
+                  ? `OpenLoop: ${formatCount(openSupportTasks.length, "support-related routed task")} still ${openSupportTasks.length === 1 ? "needs" : "need"} owner attention.`
+                  : hasCompletedFollowUps
+                    ? "OpenLoop: related support follow-ups moved into monitoring; known limits unchanged."
+                    : defaultOpenLoopNote
+              }
+            />
             <ListCard
               title="Launch-day support checklist"
               items={playbook.launchDayChecklist}
+              openLoopNote={
+                completedDocumentationCount > 0 || completedPartnerCount > 0
+                  ? `OpenLoop: ${formatCount(completedDocumentationCount, "documentation follow-up")} and ${formatCount(completedPartnerCount, "partner enablement follow-up")} completed; checklist content unchanged.`
+                  : defaultOpenLoopNote
+              }
             />
           </div>
         </div>
@@ -162,10 +207,23 @@ function getCompletedDepartmentCount(
   return tasks.filter((task) => task.department === department).length;
 }
 
-function ListCard({ title, items }: { title: string; items: string[] }) {
+function formatCount(count: number, singularLabel: string) {
+  return `${count} ${singularLabel}${count === 1 ? "" : "s"}`;
+}
+
+function ListCard({
+  title,
+  items,
+  openLoopNote,
+}: {
+  title: string;
+  items: string[];
+  openLoopNote?: string;
+}) {
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
       <h3 className="text-lg font-semibold text-stone-900">{title}</h3>
+      {openLoopNote ? <OpenLoopNote>{openLoopNote}</OpenLoopNote> : null}
       <ul className="mt-4 space-y-3 text-sm leading-6 text-stone-700">
         {items.map((item) => (
           <li key={item} className="flex gap-3">

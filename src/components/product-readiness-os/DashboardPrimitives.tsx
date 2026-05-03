@@ -94,16 +94,27 @@ export function MetricCard({
   label,
   value,
   helper,
+  openLoopNote,
 }: {
   label: string;
   value: string | number;
   helper?: string;
+  openLoopNote?: string;
 }) {
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm">
       <p className="text-sm font-medium text-stone-600">{label}</p>
       <p className="mt-2 text-3xl font-semibold text-stone-900">{value}</p>
       {helper ? <p className="mt-2 text-sm leading-5 text-stone-600">{helper}</p> : null}
+      {openLoopNote ? <OpenLoopNote>{openLoopNote}</OpenLoopNote> : null}
     </div>
+  );
+}
+
+export function OpenLoopNote({ children }: { children: string }) {
+  return (
+    <p className="mt-4 rounded-md border border-teal-100 bg-teal-50/50 px-3 py-2 text-xs leading-5 text-teal-900">
+      {children}
+    </p>
   );
 }
