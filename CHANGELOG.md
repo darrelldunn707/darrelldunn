@@ -19,6 +19,13 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 - Kept `FeedbackClassifier.tsx` as the OpenLoop UI composer with no visible layout or behavior changes.
 - Wrapped the one-page operating surface in `OpenLoopProvider` so sibling sections can later consume OpenLoop-derived state without reading `localStorage` directly.
 
+### Phase 5B Pass 2 - Section Signal Cards
+
+- Added compact OpenLoop-derived signal cards to Launch Readiness, Risks, Support Hub, and Product / Engineering Insights.
+- Kept static readiness score, readiness checklist items, risk statuses, support playbook content, and product insight source data unchanged.
+- Used task completion language focused on operational follow-up, monitoring, and future reports rather than product issue resolution.
+- Kept sibling sections on `useOpenLoop` and avoided direct `localStorage` reads.
+
 ### Phase 5A - OpenLoop Complete Task Loop
 
 - Added localStorage-backed task completion state under `openloopTaskSession`.
@@ -28,13 +35,13 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 - Updated Open Tasks and Completed Tasks metrics from active routed tasks plus task completion state.
 - Split cluster metrics into Detected Clusters for all valid duplicate clusters and Open Clusters for unresolved clusters without completed linked routed tasks.
 - Added OpenLoop-only cluster operational status and Dashboard Impact Preview updates for completed follow-up.
-- Completing a task means the operational follow-up was completed, not that the underlying product issue was automatically fixed.
+- Completing a task means the operational follow-up was completed, not that the underlying product work is complete.
 
-### Upcoming Phase 5B - Page-Wide Completion Sync
+### Future Page-Wide Completion Refinement
 
 Planned, not implemented yet.
 
-- May synchronize completed OpenLoop tasks into Launch Readiness, Risks, Support Hub, and Insights outside the OpenLoop section.
+- May deepen synchronization beyond compact signal cards after the current OpenLoop-derived pattern is reviewed.
 
 ### Phase 4 - Routed Tasks
 

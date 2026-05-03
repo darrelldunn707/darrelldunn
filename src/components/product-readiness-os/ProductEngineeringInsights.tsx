@@ -1,11 +1,18 @@
+"use client";
+
 import type { ProductInsights } from "../../types/product-readiness-os";
 import { SectionHeading } from "./DashboardPrimitives";
+import { OpenLoopSignalCard } from "./openloop/OpenLoopSignalCard";
+import { useOpenLoop } from "./openloop/OpenLoopProvider";
+
+const insightDepartments = new Set(["Engineering", "Product Ops"]);
 
 export function ProductEngineeringInsights({
   insights,
 }: {
   insights: ProductInsights;
 }) {
+  const { routedTasks } = useOpenLoop();
   const feedbackEntries = Object.entries(
     insights.feedbackVolumeByCategory,
   ).sort(
@@ -13,6 +20,15 @@ export function ProductEngineeringInsights({
       (secondVolume ?? 0) - (firstVolume ?? 0),
   );
   const maxVolume = Math.max(...feedbackEntries.map(([, volume]) => volume ?? 0));
+  const completedOwnerTasks = routedTasks.filter(
+    (task) =>
+      task.status === "Completed" && insightDepartments.has(task.department),
+  );
+  const topOpenClusters = routedTasks
+    .filter((task) => task.status !== "Completed")
+    .map((task) => task.linkedCluster)
+    .slice(0, 3);
+  const hasCompletedFollowUps = completedOwnerTasks.length > 0;
 
   return (
     <section id="insights" className="scroll-mt-20 bg-stone-50">
@@ -21,6 +37,32 @@ export function ProductEngineeringInsights({
           eyebrow="Product and engineering insights"
           title="Launch signals translated into product action"
           description="The internal view connects support feedback to high-severity issues, customer pain points, and practical next steps for product, engineering, and support."
+        />
+
+        <OpenLoopSignalCard
+          title="OpenLoop Insight Signal"
+          description={
+            hasCompletedFollowUps
+              ? `Owner follow-up completed for ${completedOwnerTasks.length} routed task${completedOwnerTasks.length === 1 ? "" : "s"}. Continue monitoring top open clusters for recurring launch signals.`
+              : "No completed OpenLoop follow-ups yet. Ingest feedback, seed sample launch feedback, and complete routed tasks to populate this signal."
+          }
+          emptyMessage={
+            hasCompletedFollowUps
+              ? undefined
+              : "Static product and engineering insight data remains unchanged."
+          }
+          stats={[
+            ["Engineering follow-ups", getCompletedDepartmentCount(completedOwnerTasks, "Engineering")],
+            ["Product Ops follow-ups", getCompletedDepartmentCount(completedOwnerTasks, "Product Ops")],
+            ["Top open clusters", topOpenClusters.length],
+          ]}
+          notes={
+            hasCompletedFollowUps
+              ? topOpenClusters.length > 0
+                ? topOpenClusters.map((cluster) => `Monitor ${cluster}.`)
+                : ["All active routed tasks have owner follow-up recorded."]
+              : undefined
+          }
         />
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
@@ -77,6 +119,13 @@ export function ProductEngineeringInsights({
       </div>
     </section>
   );
+}
+
+function getCompletedDepartmentCount(
+  tasks: Array<{ department: string }>,
+  department: string,
+) {
+  return tasks.filter((task) => task.department === department).length;
 }
 
 function ListPanel({

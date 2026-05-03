@@ -1,11 +1,34 @@
+"use client";
+
 import type { SupportPlaybook } from "../../types/product-readiness-os";
 import { SectionHeading } from "./DashboardPrimitives";
+import { OpenLoopSignalCard } from "./openloop/OpenLoopSignalCard";
+import { useOpenLoop } from "./openloop/OpenLoopProvider";
+
+const supportSignalDepartments = new Set([
+  "Support",
+  "Documentation",
+  "Partner Success",
+]);
 
 export function SupportEnablementHub({
   playbook,
 }: {
   playbook: SupportPlaybook;
 }) {
+  const { routedTasks } = useOpenLoop();
+  const completedSupportTasks = routedTasks.filter(
+    (task) =>
+      task.status === "Completed" &&
+      supportSignalDepartments.has(task.department),
+  );
+  const openSupportTasks = routedTasks.filter(
+    (task) =>
+      task.status !== "Completed" &&
+      supportSignalDepartments.has(task.department),
+  );
+  const hasCompletedFollowUps = completedSupportTasks.length > 0;
+
   return (
     <section id="support-hub" className="scroll-mt-20 bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
@@ -13,6 +36,36 @@ export function SupportEnablementHub({
           eyebrow="Support enablement hub"
           title="Playbooks, macros, known limits, and escalation paths"
           description="Support teams get practical guidance for launch-day triage without needing a separate backend or fake login in this first version."
+        />
+
+        <OpenLoopSignalCard
+          title="OpenLoop Support Signal"
+          description={
+            hasCompletedFollowUps
+              ? `Support guidance follow-up completed for ${completedSupportTasks.length} routed task${completedSupportTasks.length === 1 ? "" : "s"}. Documentation or partner enablement follow-up may still be needed for open clusters.`
+              : "No completed OpenLoop follow-ups yet. Ingest feedback, seed sample launch feedback, and complete routed tasks to populate this signal."
+          }
+          emptyMessage={
+            hasCompletedFollowUps
+              ? undefined
+              : "Static support playbook content remains unchanged."
+          }
+          stats={[
+            ["Support follow-ups", getCompletedDepartmentCount(completedSupportTasks, "Support")],
+            ["Docs follow-ups", getCompletedDepartmentCount(completedSupportTasks, "Documentation")],
+            ["Partner follow-ups", getCompletedDepartmentCount(completedSupportTasks, "Partner Success")],
+            ["Open support clusters", openSupportTasks.length],
+          ]}
+          notes={
+            hasCompletedFollowUps
+              ? completedSupportTasks
+                  .slice(0, 3)
+                  .map(
+                    (task) =>
+                      `${task.department} follow-up completed for ${task.linkedCluster}.`,
+                  )
+              : undefined
+          }
         />
 
         <div className="mt-8 rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
@@ -100,6 +153,13 @@ export function SupportEnablementHub({
       </div>
     </section>
   );
+}
+
+function getCompletedDepartmentCount(
+  tasks: Array<{ department: string }>,
+  department: string,
+) {
+  return tasks.filter((task) => task.department === department).length;
 }
 
 function ListCard({ title, items }: { title: string; items: string[] }) {

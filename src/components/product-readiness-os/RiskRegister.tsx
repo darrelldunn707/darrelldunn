@@ -1,7 +1,23 @@
+"use client";
+
 import type { RiskRegisterItem } from "../../types/product-readiness-os";
 import { SectionHeading, SeverityBadge } from "./DashboardPrimitives";
+import { OpenLoopSignalCard } from "./openloop/OpenLoopSignalCard";
+import { useOpenLoop } from "./openloop/OpenLoopProvider";
 
 export function RiskRegister({ risks }: { risks: RiskRegisterItem[] }) {
+  const { clusterSummaries, routedTasks } = useOpenLoop();
+  const completedTasks = routedTasks.filter((task) => task.status === "Completed");
+  const monitoringClusters = new Set(
+    completedTasks.map((task) => task.linkedCluster),
+  );
+  const severeOpenClusters = clusterSummaries.filter(
+    (cluster) =>
+      cluster.severeImpactCount > 0 &&
+      !monitoringClusters.has(cluster.clusterName),
+  );
+  const hasCompletedFollowUps = completedTasks.length > 0;
+
   return (
     <section id="risks" className="scroll-mt-20 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
@@ -9,6 +25,34 @@ export function RiskRegister({ risks }: { risks: RiskRegisterItem[] }) {
           eyebrow="Risk register"
           title="Launch risks with owners, mitigation plans, and escalation paths"
           description="This internal view keeps customer-facing readiness separate from the operational details support, product, and engineering need to manage launch risk."
+        />
+
+        <OpenLoopSignalCard
+          title="OpenLoop Risk Signal"
+          description={
+            hasCompletedFollowUps
+              ? `${monitoringClusters.size} cluster follow-up${monitoringClusters.size === 1 ? "" : "s"} moved to monitoring. Risk posture is updated inside OpenLoop while the base risk register remains unchanged.`
+              : "No completed OpenLoop follow-ups yet. Ingest feedback, seed sample launch feedback, and complete routed tasks to populate this signal."
+          }
+          emptyMessage={
+            hasCompletedFollowUps
+              ? undefined
+              : "Base risk statuses are not changed by OpenLoop until a later sync pass."
+          }
+          stats={[
+            ["Monitoring clusters", monitoringClusters.size],
+            ["Severe open clusters", severeOpenClusters.length],
+            ["Completed follow-ups", completedTasks.length],
+          ]}
+          notes={
+            hasCompletedFollowUps
+              ? [
+                  "Risk register remains unchanged.",
+                  "Base risk register keeps its existing statuses.",
+                  "Monitor future reports before reducing risk posture.",
+                ]
+              : undefined
+          }
         />
 
         <div className="mt-8 grid gap-5 lg:grid-cols-2">

@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReadinessChecklistGroup } from "../../types/product-readiness-os";
 import {
   MetricCard,
@@ -9,6 +11,8 @@ import {
   calculateGroupReadinessScore,
   countReadinessStatuses,
 } from "../../lib/product-readiness-os";
+import { OpenLoopSignalCard } from "./openloop/OpenLoopSignalCard";
+import { useOpenLoop } from "./openloop/OpenLoopProvider";
 
 export function CommandCenter({
   groups,
@@ -18,6 +22,12 @@ export function CommandCenter({
   readinessScore: number;
 }) {
   const statusCounts = countReadinessStatuses(groups);
+  const { metrics, routedTasks } = useOpenLoop();
+  const completedTasks = routedTasks.filter((task) => task.status === "Completed");
+  const monitoringClusters = [
+    ...new Set(completedTasks.map((task) => task.linkedCluster)),
+  ];
+  const hasCompletedFollowUps = completedTasks.length > 0;
 
   return (
     <section id="command-center" className="scroll-mt-20 bg-stone-50">
@@ -55,25 +65,31 @@ export function CommandCenter({
           <ProgressBar value={readinessScore} label="Overall readiness" />
         </div>
 
-        <div className="mt-6 rounded-lg border border-teal-100 bg-teal-50 p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-800">
-            OpenLoop Signal
-          </p>
-          <h3 className="mt-2 text-lg font-semibold text-stone-900">
-            3 routed feedback clusters are currently affecting launch readiness
-          </h3>
-          <ul className="mt-4 grid gap-2 text-sm leading-6 text-stone-700 md:grid-cols-3">
-            <li className="rounded-lg bg-white p-3 shadow-sm">
-              SSO setup failures
-            </li>
-            <li className="rounded-lg bg-white p-3 shadow-sm">
-              Connector permissions confusion
-            </li>
-            <li className="rounded-lg bg-white p-3 shadow-sm">
-              Partner training gaps
-            </li>
-          </ul>
-        </div>
+        <OpenLoopSignalCard
+          title="OpenLoop Signal"
+          description={
+            hasCompletedFollowUps
+              ? `${completedTasks.length} operational follow-up${completedTasks.length === 1 ? "" : "s"} completed. Recent completed work moved related clusters into monitoring while launch readiness continues to watch open signals.`
+              : "No completed OpenLoop follow-ups yet. Ingest feedback, seed sample launch feedback, and complete routed tasks to populate this signal."
+          }
+          emptyMessage={
+            hasCompletedFollowUps
+              ? undefined
+              : "Base readiness score remains unchanged until a later sync pass."
+          }
+          stats={[
+            ["Completed follow-ups", metrics.completedTasks],
+            ["Open tasks", metrics.openTasks],
+            ["Open clusters", metrics.openClusters],
+          ]}
+          notes={
+            hasCompletedFollowUps
+              ? monitoringClusters
+                  .slice(0, 3)
+                  .map((cluster) => `${cluster} moved into monitoring.`)
+              : undefined
+          }
+        />
 
         <div className="mt-8 grid gap-5 lg:grid-cols-2">
           {groups.map((group) => (

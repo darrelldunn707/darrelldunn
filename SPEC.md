@@ -84,9 +84,9 @@ OpenLoop is implemented as a front-end-only demo module:
 
 The optional SQLite scripts in `sql/product-readiness-os/` are a local practice artifact for learning SQL against a similar product-operations model. They are not connected to the live route.
 
-## Phase 5A Behavior
+## Phase 5 Behavior
 
-Phase 5A adds a Complete Task loop inside OpenLoop without changing the front-end-only scope.
+Phase 5 adds a Complete Task loop and OpenLoop-derived page signals without changing the front-end-only scope.
 
 Current behavior:
 
@@ -94,14 +94,15 @@ Current behavior:
 - Detected Clusters should count all valid duplicate clusters in the current live demo session.
 - Open Clusters should count valid duplicate clusters that do not have a completed linked routed task.
 - Task completion updates OpenLoop cluster operational status and Dashboard Impact Preview.
-- A completed task means the operational follow-up was completed, not that the underlying product issue is automatically fixed.
+- Launch Readiness, Risks, Support Hub, and Product / Engineering Insights show compact OpenLoop-derived signal cards.
+- Those signal cards summarize operational follow-up, monitoring clusters, open clusters, and owner follow-up without mutating the static source data.
+- A completed task means the operational follow-up was completed, not that the underlying product work is complete.
 - Routed tasks should remain cluster-based rather than one task per feedback record.
 
 Deferred behavior:
 
-- Page-wide synchronization outside OpenLoop is not implemented yet.
-- A later phase may connect completed tasks to Launch Readiness, Risks, Support Hub, and Insights outside the OpenLoop section.
-- The OpenLoop provider is available as the shared state boundary for that later page-wide synchronization work.
+- Static readiness checklist status, base readiness score, risk register status, support playbook content, and product insight source data are not mutated by OpenLoop task completion.
+- A later phase may deepen page-wide synchronization after the signal-card pattern is reviewed.
 
 ## Non-Goals
 

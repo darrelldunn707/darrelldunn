@@ -17,6 +17,6 @@ This file tracks active work only. Completed work should be removed or moved to 
 
 ## Backlog
 
-- Later Phase 5B: Consider page-wide synchronization from completed OpenLoop tasks into Launch Readiness, Risks, Support Hub, and Insights. Keep task completion scoped to operational follow-up, not underlying product issue resolution.
+- Later refinement: Review whether completed OpenLoop tasks should drive deeper page-wide synchronization beyond compact signal cards. Keep task completion scoped to operational follow-up, not underlying product issue resolution.
 - Consider screenshots or a short walkthrough only if they help reviewers understand the demo faster.
 - Revisit whether a `docs/` directory is needed after the documentation set grows.
