@@ -99,6 +99,12 @@ Current behavior:
 - A completed task means the operational follow-up was completed, not that the underlying product work is complete.
 - Routed tasks should remain cluster-based rather than one task per feedback record.
 
+### OpenLoop Secondary Notes
+
+Launch Readiness and Support Hub display OpenLoop-derived secondary notes based on session metrics, routed tasks, completed follow-ups, and cluster summaries.
+
+These notes provide operational context only. They do not mutate static readiness data, change base readiness scores, close risks, change static support content, or imply that product issues are fixed.
+
 Deferred behavior:
 
 - Static readiness checklist status, base readiness score, risk register status, support playbook content, and product insight source data are not mutated by OpenLoop task completion.

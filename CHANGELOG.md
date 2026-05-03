@@ -26,6 +26,14 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 - Used task completion language focused on operational follow-up, monitoring, and future reports rather than product issue resolution.
 - Kept sibling sections on `useOpenLoop` and avoided direct `localStorage` reads.
 
+### Phase 5C - OpenLoop Readiness and Support Notes
+
+- Added reusable `OpenLoopNote` UI treatment.
+- Added OpenLoop secondary notes to Launch Readiness metric cards.
+- Added OpenLoop secondary notes to Support Hub panels.
+- Kept primary readiness values and static support content unchanged.
+- Preserved the distinction between operational follow-up and product issue resolution.
+
 ### Phase 5A - OpenLoop Complete Task Loop
 
 - Added localStorage-backed task completion state under `openloopTaskSession`.
