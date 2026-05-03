@@ -10,17 +10,18 @@ export function OpenLoopMetricsBar({
   onSeed: () => void;
 }) {
   const metricCards: [string, number][] = [
-    ["Total Feedback", metrics.totalIngestedFeedback],
+    ["Total Ingested Feedback", metrics.totalIngestedFeedback],
+    ["Detected Clusters", metrics.detectedClusters],
     ["Open Clusters", metrics.openClusters],
     ["Open Tasks", metrics.openTasks],
-    ["Human Review", metrics.humanReviewQueue],
+    ["Human Review Queue", metrics.humanReviewQueue],
     ["Completed Tasks", metrics.completedTasks],
   ];
 
   return (
     <div className="mt-6 rounded-lg border border-stone-200 bg-stone-100 p-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <dl className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <dl className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {metricCards.map(([label, value]) => (
             <div
               key={label}
