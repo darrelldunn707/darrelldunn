@@ -36,6 +36,18 @@ Root-level Markdown files are enough while the documentation set is small. Add a
 
 `TODO.md` should stay focused on active and upcoming work. Completed Product Readiness OS phases should move into `CHANGELOG.md` so the project history remains visible without cluttering active planning.
 
+### 009. Routed tasks are cluster-based
+
+Routed tasks should be generated from meaningful duplicate clusters, not from every individual feedback record. This keeps the demo focused on operational signal management instead of ticket volume.
+
+### 010. Task completion means operational follow-up
+
+When Phase 5 adds task completion, completing a task should mean the assigned follow-up work was completed. It should not imply that the underlying product issue, launch risk, or customer problem is automatically resolved.
+
+### 011. SQLite is a practice artifact until explicitly connected
+
+SQL files under `sql/product-readiness-os/` may be used for local SQLite learning and practice. They are not part of the live Product Readiness OS route and should not be treated as a backend integration unless explicitly promoted later.
+
 ## Superseded Decisions
 
 None yet.

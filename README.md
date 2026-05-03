@@ -4,6 +4,12 @@ This repo contains a Next.js portfolio demo for a Product Engagement Specialist 
 
 This is a fictional work sample. It is not an OpenAI internal tool and should not use confidential OpenAI branding or internal terminology.
 
+## Demo Purpose
+
+Product Readiness OS shows how a Product Engagement Specialist could coordinate a launch across product, engineering, support, partner, and operations teams. The demo emphasizes readiness tracking, feedback intake, deterministic classification, duplicate cluster detection, routed follow-up work, and reviewer-friendly role mapping.
+
+The main route is [`/product-readiness-os`](http://localhost:3000/product-readiness-os).
+
 ## Run Locally
 
 ```bash
@@ -23,10 +29,21 @@ npm run build
 
 - `src/app/` - Next.js app routes and page entry points.
 - `src/components/product-readiness-os/` - Product Readiness OS UI components.
+- `src/components/product-readiness-os/openloop/` - Presentational OpenLoop Feedback Router cards.
 - `src/data/product-readiness-os/` - Local demo data.
 - `src/lib/product-readiness-os/` - Demo logic and helpers.
 - `src/types/` - Shared TypeScript types.
+- `sql/product-readiness-os/` - Optional SQLite practice scripts based on the demo data model.
 - `public/` - Static assets.
+
+## Demo Data And Persistence
+
+- Baseline demo content lives in local TypeScript data files.
+- The OpenLoop Feedback Router stores live demo session records in browser `localStorage` under `openloopFeedbackSession`.
+- Preset examples and custom feedback ingestion update browser-local session records, metrics, duplicate clusters, routed tasks, and the feedback log.
+- Reset demo data clears the browser-local session.
+- No backend, database, authentication, or external API powers the live page.
+- The SQLite files under `sql/product-readiness-os/` are local learning and practice scripts only. They are not connected to the live Next.js demo.
 
 ## Documentation Map
 
@@ -43,6 +60,7 @@ Current docs:
 - `TODO.md` - Active work only: current next steps, bugs, and polish tasks.
 - `CHANGELOG.md` - Completed work and phase history.
 - `DOC_CHECKLIST.md` - Repeatable documentation review workflow for code, content, and demo changes.
+- `sql/product-readiness-os/README.md` - Optional SQLite practice database notes and script order.
 
 No additional documentation folders are needed right now. Keep these files at the repo root until the docs become large enough to justify a dedicated `docs/` directory.
 

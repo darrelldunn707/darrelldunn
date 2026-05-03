@@ -68,11 +68,37 @@ Current data areas:
 
 The OpenLoop session is front-end only. It persists in the browser so preset clicks, custom feedback ingestion, seeded sample feedback, cluster summaries, routed tasks, and the feedback log can visibly update across refreshes.
 
+## OpenLoop Architecture
+
+OpenLoop is implemented as a front-end-only demo module:
+
+- `FeedbackClassifier.tsx` orchestrates state, event handlers, and existing card layout.
+- `src/components/product-readiness-os/openloop/` contains presentational OpenLoop cards for metrics, feedback input, classification, normalized records, routing decisions, dedupe, routed tasks, dashboard impact, and feedback log.
+- `src/lib/product-readiness-os/openloop-session.ts` isolates browser-local session storage.
+- `src/lib/product-readiness-os/openloop-clusters.ts` groups meaningful duplicate clusters and calculates trend labels.
+- `src/lib/product-readiness-os/openloop-routed-tasks.ts` generates routed tasks from cluster summaries, not from every individual feedback record.
+- `src/lib/product-readiness-os/openloop-seed-data.ts` creates coherent sample launch feedback records for the live demo session.
+- `src/lib/product-readiness-os/openloop-metrics.ts` derives Total Ingested Feedback, Open Clusters, Open Tasks, Human Review Queue, and Completed Tasks.
+
+The optional SQLite scripts in `sql/product-readiness-os/` are a local practice artifact for learning SQL against a similar product-operations model. They are not connected to the live route.
+
+## Planned Phase 5 Behavior
+
+Phase 5 should add a Complete Task loop without changing the front-end-only scope unless explicitly requested.
+
+Expected behavior:
+
+- Completing a routed task should update Open Tasks and Completed Tasks.
+- Task completion should update cluster status, risk status, launch readiness impact, Support Hub updates, and Product / Engineering Insight updates where appropriate.
+- A completed task means the operational follow-up was completed, not that the underlying product issue is automatically fixed.
+- Routed tasks should remain cluster-based rather than one task per feedback record.
+
 ## Non-Goals
 
 - No backend service in version 1.
 - No authentication in version 1.
 - No external APIs in version 1.
+- No live SQLite connection in version 1.
 - No live customer data.
 - No confidential company branding or internal terminology.
 - No claim that the demo is an internal OpenAI tool.

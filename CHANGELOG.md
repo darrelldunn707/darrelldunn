@@ -7,8 +7,10 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 ### Public GitHub Readiness
 
 - Refactored OpenLoop Feedback Router logic into focused helper modules for session storage, cluster aggregation, routed task generation, seed data, and metrics.
+- Split OpenLoop Feedback Router UI cards into smaller presentational components under `src/components/product-readiness-os/openloop/`.
 - Kept `FeedbackClassifier.tsx` as the state and layout orchestrator without changing the visible demo experience.
 - Isolated `localStorage` access behind OpenLoop session helper functions so browser-local persistence can be replaced later without changing UI components.
+- Clarified public-readiness documentation for OpenLoop architecture, browser-local persistence, cluster-based tasks, Phase 5 boundaries, and optional SQLite practice scripts.
 
 ### Phase 5 - Complete Task Loop
 

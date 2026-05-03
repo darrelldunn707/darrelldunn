@@ -4,7 +4,6 @@ This file tracks active work only. Completed work should be removed or moved to 
 
 ## Current
 
-- Finalize `SPEC.md` against the live demo after the main UI is stable.
 - Review public-facing copy for Product Engagement Specialist alignment.
 - Confirm every demo view clearly maps to one of the four intended perspectives:
   - External Partner View
@@ -12,6 +11,7 @@ This file tracks active work only. Completed work should be removed or moved to 
   - Launch Readiness
   - Product & Engineering View
 - Check responsive behavior across desktop and mobile viewports.
+- Confirm public GitHub polish after the SQL practice files are finalized.
 - Run `npm run lint` before sharing the demo.
 - Run `npm run build` before deployment.
 
