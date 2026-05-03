@@ -51,7 +51,7 @@ This is a fictional work sample. It is not an OpenAI internal tool.
 
 ## Data Model
 
-Version 1 uses local TypeScript data for baseline demo content and browser-local `localStorage` state for the OpenLoop live demo session.
+Version 1 uses local TypeScript data for baseline demo content and browser-local `localStorage` state for the OpenLoop live demo session and routed-task completion state.
 
 Current data areas:
 
@@ -63,35 +63,45 @@ Current data areas:
 - OpenLoop session records
 - Duplicate cluster summaries
 - Routed tasks derived from active clusters
+- Routed task completion records
 - Product insights
 - Partner readiness
 
-The OpenLoop session is front-end only. It persists in the browser so preset clicks, custom feedback ingestion, seeded sample feedback, cluster summaries, routed tasks, and the feedback log can visibly update across refreshes.
+The OpenLoop session is front-end only. It persists in the browser so preset clicks, custom feedback ingestion, seeded sample feedback, cluster summaries, routed tasks, task completion, and the feedback log can visibly update across refreshes.
 
 ## OpenLoop Architecture
 
 OpenLoop is implemented as a front-end-only demo module:
 
-- `FeedbackClassifier.tsx` orchestrates state, event handlers, and existing card layout.
-- `src/components/product-readiness-os/openloop/` contains presentational OpenLoop cards for metrics, feedback input, classification, normalized records, routing decisions, dedupe, routed tasks, dashboard impact, and feedback log.
-- `src/lib/product-readiness-os/openloop-session.ts` isolates browser-local session storage.
+- `src/components/product-readiness-os/openloop/OpenLoopProvider.tsx` owns OpenLoop state, event handlers, derived metrics, cluster summaries, routed tasks, and browser-local session synchronization.
+- `FeedbackClassifier.tsx` consumes `useOpenLoop` and remains the OpenLoop UI composer for the existing card layout.
+- `src/components/product-readiness-os/openloop/` contains the OpenLoop provider, hook, and Feedback Router cards for metrics, feedback input, classification, normalized records, routing decisions, dedupe, routed tasks, dashboard impact, and feedback log.
+- `src/lib/product-readiness-os/openloop-session.ts` isolates browser-local feedback session storage and task completion storage.
 - `src/lib/product-readiness-os/openloop-clusters.ts` groups meaningful duplicate clusters and calculates trend labels.
 - `src/lib/product-readiness-os/openloop-routed-tasks.ts` generates routed tasks from cluster summaries, not from every individual feedback record.
 - `src/lib/product-readiness-os/openloop-seed-data.ts` creates coherent sample launch feedback records for the live demo session.
-- `src/lib/product-readiness-os/openloop-metrics.ts` derives Total Ingested Feedback, Open Clusters, Open Tasks, Human Review Queue, and Completed Tasks.
+- `src/lib/product-readiness-os/openloop-metrics.ts` derives Total Ingested Feedback, Detected Clusters, Open Clusters, Open Tasks, Human Review Queue, and Completed Tasks from feedback records plus task completion records.
 
 The optional SQLite scripts in `sql/product-readiness-os/` are a local practice artifact for learning SQL against a similar product-operations model. They are not connected to the live route.
 
-## Planned Phase 5 Behavior
+## Phase 5A Behavior
 
-Phase 5 should add a Complete Task loop without changing the front-end-only scope unless explicitly requested.
+Phase 5A adds a Complete Task loop inside OpenLoop without changing the front-end-only scope.
 
-Expected behavior:
+Current behavior:
 
 - Completing a routed task should update Open Tasks and Completed Tasks.
-- Task completion should update cluster status, risk status, launch readiness impact, Support Hub updates, and Product / Engineering Insight updates where appropriate.
+- Detected Clusters should count all valid duplicate clusters in the current live demo session.
+- Open Clusters should count valid duplicate clusters that do not have a completed linked routed task.
+- Task completion updates OpenLoop cluster operational status and Dashboard Impact Preview.
 - A completed task means the operational follow-up was completed, not that the underlying product issue is automatically fixed.
 - Routed tasks should remain cluster-based rather than one task per feedback record.
+
+Deferred behavior:
+
+- Page-wide synchronization outside OpenLoop is not implemented yet.
+- A later phase may connect completed tasks to Launch Readiness, Risks, Support Hub, and Insights outside the OpenLoop section.
+- The OpenLoop provider is available as the shared state boundary for that later page-wide synchronization work.
 
 ## Non-Goals
 

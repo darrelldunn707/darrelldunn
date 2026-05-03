@@ -12,13 +12,29 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 - Isolated `localStorage` access behind OpenLoop session helper functions so browser-local persistence can be replaced later without changing UI components.
 - Clarified public-readiness documentation for OpenLoop architecture, browser-local persistence, cluster-based tasks, Phase 5 boundaries, and optional SQLite practice scripts.
 
-### Phase 5 - Complete Task Loop
+### Phase 5B Pass 1 - OpenLoop Provider Boundary
+
+- Added `OpenLoopProvider` and `useOpenLoop` as the shared OpenLoop state boundary.
+- Moved OpenLoop state, handlers, derived metrics, cluster summaries, routed tasks, seed/reset, ingestion, and task completion handlers out of `FeedbackClassifier.tsx`.
+- Kept `FeedbackClassifier.tsx` as the OpenLoop UI composer with no visible layout or behavior changes.
+- Wrapped the one-page operating surface in `OpenLoopProvider` so sibling sections can later consume OpenLoop-derived state without reading `localStorage` directly.
+
+### Phase 5A - OpenLoop Complete Task Loop
+
+- Added localStorage-backed task completion state under `openloopTaskSession`.
+- Kept task completion state separate from feedback records under `openloopFeedbackSession`.
+- Added deterministic routed task IDs based on linked cluster and department.
+- Added Complete Task controls inside the Routed Tasks card.
+- Updated Open Tasks and Completed Tasks metrics from active routed tasks plus task completion state.
+- Split cluster metrics into Detected Clusters for all valid duplicate clusters and Open Clusters for unresolved clusters without completed linked routed tasks.
+- Added OpenLoop-only cluster operational status and Dashboard Impact Preview updates for completed follow-up.
+- Completing a task means the operational follow-up was completed, not that the underlying product issue was automatically fixed.
+
+### Upcoming Phase 5B - Page-Wide Completion Sync
 
 Planned, not implemented yet.
 
-- Will add a complete-task loop after the routed task model is ready.
-- Expected updates include Open Tasks, Completed Tasks, cluster status, risk status, launch readiness impact, Support Hub updates, and Product / Engineering Insight updates.
-- Task completion is intentionally out of scope for the current demo.
+- May synchronize completed OpenLoop tasks into Launch Readiness, Risks, Support Hub, and Insights outside the OpenLoop section.
 
 ### Phase 4 - Routed Tasks
 
@@ -59,4 +75,5 @@ Planned, not implemented yet.
 
 - The demo remains one route at `/product-readiness-os`.
 - The OpenLoop session is front-end only and stored in `localStorage`.
+- Routed tasks are generated from duplicate clusters, not individual feedback records.
 - No backend, database, authentication, or external API calls have been added.

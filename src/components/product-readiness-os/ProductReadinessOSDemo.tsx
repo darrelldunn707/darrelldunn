@@ -13,6 +13,7 @@ import { CommandCenter } from "./CommandCenter";
 import { DemoCapabilities } from "./DemoCapabilities";
 import { FeedbackClassifier } from "./FeedbackClassifier";
 import { LaunchScenarioPanel } from "./LaunchScenarioPanel";
+import { OpenLoopProvider } from "./openloop/OpenLoopProvider";
 import { PartnerView } from "./PartnerView";
 import { ProductEngineeringInsights } from "./ProductEngineeringInsights";
 import { RiskRegister } from "./RiskRegister";
@@ -50,20 +51,22 @@ export function ProductReadinessOSDemo() {
       <GlobalHeader />
       <Hero />
       <SectionNavigation />
-      <LaunchScenarioPanel
-        scenario={launchScenario}
-        readinessScore={readinessScore}
-      />
-      <FeedbackClassifier samples={feedbackSamples} />
-      <AccessSeparation />
-      <CommandCenter
-        groups={readinessChecklist}
-        readinessScore={readinessScore}
-      />
-      <RiskRegister risks={riskRegister} />
-      <SupportEnablementHub playbook={supportPlaybook} />
-      <PartnerView partnerReadiness={partnerReadiness} />
-      <ProductEngineeringInsights insights={productInsights} />
+      <OpenLoopProvider samples={feedbackSamples}>
+        <LaunchScenarioPanel
+          scenario={launchScenario}
+          readinessScore={readinessScore}
+        />
+        <FeedbackClassifier />
+        <AccessSeparation />
+        <CommandCenter
+          groups={readinessChecklist}
+          readinessScore={readinessScore}
+        />
+        <RiskRegister risks={riskRegister} />
+        <SupportEnablementHub playbook={supportPlaybook} />
+        <PartnerView partnerReadiness={partnerReadiness} />
+        <ProductEngineeringInsights insights={productInsights} />
+      </OpenLoopProvider>
       <DemoCapabilities />
       <FloatingTopLink />
     </main>

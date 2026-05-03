@@ -29,7 +29,7 @@ npm run build
 
 - `src/app/` - Next.js app routes and page entry points.
 - `src/components/product-readiness-os/` - Product Readiness OS UI components.
-- `src/components/product-readiness-os/openloop/` - Presentational OpenLoop Feedback Router cards.
+- `src/components/product-readiness-os/openloop/` - OpenLoop provider, hook, and Feedback Router cards.
 - `src/data/product-readiness-os/` - Local demo data.
 - `src/lib/product-readiness-os/` - Demo logic and helpers.
 - `src/types/` - Shared TypeScript types.
@@ -40,7 +40,11 @@ npm run build
 
 - Baseline demo content lives in local TypeScript data files.
 - The OpenLoop Feedback Router stores live demo session records in browser `localStorage` under `openloopFeedbackSession`.
+- OpenLoop task completion state is stored separately in browser `localStorage` under `openloopTaskSession`.
+- `localStorage` is demo-only persistence for the live browser session. It is not a backend, database, or production data layer.
 - Preset examples and custom feedback ingestion update browser-local session records, metrics, duplicate clusters, routed tasks, and the feedback log.
+- Routed tasks are generated from duplicate feedback clusters, not from every individual feedback item.
+- Completing a routed task means the operational follow-up was completed inside OpenLoop. It does not mean the underlying product issue was fixed.
 - Reset demo data clears the browser-local session.
 - No backend, database, authentication, or external API powers the live page.
 - The SQLite files under `sql/product-readiness-os/` are local learning and practice scripts only. They are not connected to the live Next.js demo.

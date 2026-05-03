@@ -48,6 +48,14 @@ When Phase 5 adds task completion, completing a task should mean the assigned fo
 
 SQL files under `sql/product-readiness-os/` may be used for local SQLite learning and practice. They are not part of the live Product Readiness OS route and should not be treated as a backend integration unless explicitly promoted later.
 
+### 012. Task completion state stays separate from feedback records
+
+OpenLoop task completion should be stored separately from feedback session records. Feedback records represent ingested feedback. Task completion records represent operational follow-up state for cluster-derived routed tasks.
+
+### 013. OpenLoop provider is the page-wide state boundary
+
+OpenLoop state should flow through `OpenLoopProvider` and `useOpenLoop`, not through direct `localStorage` reads in sibling sections. This keeps browser-local persistence isolated and prepares Launch Readiness, Risks, Support Hub, and Insights for later OpenLoop-derived signal cards.
+
 ## Superseded Decisions
 
 None yet.
