@@ -42,7 +42,7 @@ Routed tasks should be generated from meaningful duplicate clusters, not from ev
 
 ### 010. Task completion means operational follow-up
 
-When Phase 5 adds task completion, completing a task should mean the assigned follow-up work was completed. It should not imply that the underlying product issue, launch risk, or customer problem is automatically resolved.
+Completing an OpenLoop routed task means the assigned operational follow-up work was completed. It should not imply that the underlying product issue, launch risk, or customer problem is automatically resolved.
 
 ### 011. SQLite is a practice artifact until explicitly connected
 
@@ -55,6 +55,10 @@ OpenLoop task completion should be stored separately from feedback session recor
 ### 013. OpenLoop provider is the page-wide state boundary
 
 OpenLoop state should flow through `OpenLoopProvider` and `useOpenLoop`, not through direct `localStorage` reads in sibling sections. This keeps browser-local persistence isolated and prepares Launch Readiness, Risks, Support Hub, and Insights for later OpenLoop-derived signal cards.
+
+### 014. Human review state stays separate from feedback records
+
+Human review status should be stored separately from feedback session records. Mark Reviewed means a human review checkpoint was completed. It should not imply that OpenLoop corrected the classification, learned a new behavior, changed the route, or resolved the underlying product issue.
 
 ## Superseded Decisions
 

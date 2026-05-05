@@ -51,7 +51,7 @@ This is a fictional work sample. It is not an OpenAI internal tool.
 
 ## Data Model
 
-Version 1 uses local TypeScript data for baseline demo content and browser-local `localStorage` state for the OpenLoop live demo session and routed-task completion state.
+Version 1 uses local TypeScript data for baseline demo content and browser-local `localStorage` state for the OpenLoop live demo session, routed-task completion state, and human review state.
 
 Current data areas:
 
@@ -64,10 +64,11 @@ Current data areas:
 - Duplicate cluster summaries
 - Routed tasks derived from active clusters
 - Routed task completion records
+- Human review records
 - Product insights
 - Partner readiness
 
-The OpenLoop session is front-end only. It persists in the browser so preset clicks, custom feedback ingestion, seeded sample feedback, cluster summaries, routed tasks, task completion, and the feedback log can visibly update across refreshes.
+The OpenLoop session is front-end only. It persists in the browser so preset clicks, custom feedback ingestion, seeded sample feedback, cluster summaries, routed tasks, task completion, human review status, and the feedback log can visibly update across refreshes.
 
 ## OpenLoop Architecture
 
@@ -75,12 +76,13 @@ OpenLoop is implemented as a front-end-only demo module:
 
 - `src/components/product-readiness-os/openloop/OpenLoopProvider.tsx` owns OpenLoop state, event handlers, derived metrics, cluster summaries, routed tasks, and browser-local session synchronization.
 - `FeedbackClassifier.tsx` consumes `useOpenLoop` and remains the OpenLoop UI composer for the existing card layout.
-- `src/components/product-readiness-os/openloop/` contains the OpenLoop provider, hook, and Feedback Router cards for metrics, feedback input, classification, normalized records, routing decisions, dedupe, routed tasks, dashboard impact, and feedback log.
+- `src/components/product-readiness-os/openloop/` contains the OpenLoop provider, hook, and Feedback Router cards for metrics, feedback input, classification, normalized records, routing decisions, human review, dedupe, routed tasks, dashboard impact, and feedback log.
 - `src/lib/product-readiness-os/openloop-session.ts` isolates browser-local feedback session storage and task completion storage.
+- `src/lib/product-readiness-os/openloop-human-review.ts` isolates browser-local human review storage and derives pending queue items, review reasons, Human Review Rate, and review-rate trend.
 - `src/lib/product-readiness-os/openloop-clusters.ts` groups meaningful duplicate clusters and calculates trend labels.
 - `src/lib/product-readiness-os/openloop-routed-tasks.ts` generates routed tasks from cluster summaries, not from every individual feedback record.
 - `src/lib/product-readiness-os/openloop-seed-data.ts` creates coherent sample launch feedback records for the live demo session.
-- `src/lib/product-readiness-os/openloop-metrics.ts` derives Total Ingested Feedback, Detected Clusters, Open Clusters, Open Tasks, Human Review Queue, and Completed Tasks from feedback records plus task completion records.
+- `src/lib/product-readiness-os/openloop-metrics.ts` derives Total Ingested Feedback, Detected Clusters, Open Clusters, Open Tasks, Human Review Queue, Human Review Rate, and Completed Tasks from feedback records, task completion records, and human review records.
 
 The optional SQLite scripts in `sql/product-readiness-os/` are a local practice artifact for learning SQL against a similar product-operations model. They are not connected to the live route.
 
@@ -105,7 +107,28 @@ Launch Readiness and Support Hub display OpenLoop-derived secondary notes based 
 
 These notes provide operational context only. They do not mutate static readiness data, change base readiness scores, close risks, change static support content, or imply that product issues are fixed.
 
-Deferred behavior:
+## Phase 7A Human Review Behavior
+
+Phase 7A adds a visible Human Review Queue so the demo shows where deterministic automation stops and human judgment takes over.
+
+Current behavior:
+
+- Records enter the Human Review Queue when they are low-confidence, unclear, high-severity, marked as needing human review, or classified as needing triage.
+- Mark Reviewed removes a record from the pending queue without changing the original feedback record or pretending the classification was corrected.
+- Human review status is stored separately from feedback records under `openloopHumanReviewSession`.
+- Reset demo data clears feedback records, task completion records, and human review records.
+- Human Review Queue counts only pending, unreviewed records requiring review.
+- Human Review Rate is calculated from all ingested records that require review divided by Total Ingested Feedback.
+- Human Review Rate is a historical intake-quality metric, so it does not decrease just because a pending item was marked reviewed.
+- Human Review Queue displays a simple 24-hour trend comparing the current review rate to the previous 24-hour window.
+
+Phase 7A deferred behavior:
+
+- Human review does not include override controls yet.
+- Human review does not add behavioral learning logic yet.
+- Human review does not automatically correct classifications, routes, clusters, severity, or priority.
+
+Still deferred behavior:
 
 - Static readiness checklist status, base readiness score, risk register status, support playbook content, and product insight source data are not mutated by OpenLoop task completion.
 - A later phase may deepen page-wide synchronization after the signal-card pattern is reviewed.

@@ -75,6 +75,20 @@ Use this ownership map:
 - Use `TODO.md` for active and future phases.
 - Do not leave completed work in `TODO.md`.
 - If a phase is partially implemented, document it clearly as partial, planned, or deferred.
+- If a request names a phase, pass, or milestone, update `CHANGELOG.md` in the same implementation task when the work ships.
+- If a phase changes metrics, persistence keys, state ownership, or demo behavior, update `SPEC.md` in the same implementation task.
+
+## Implementation Closeout
+
+When implementation changes pass validation, update phase-tracking docs before finalizing the task:
+
+- Add completed implementation work to `CHANGELOG.md`.
+- Add new or changed product behavior, metrics, state, persistence keys, and scope boundaries to `SPEC.md`.
+- Move planned, deferred, or still-open work to `TODO.md`.
+- Remove completed work from `TODO.md`.
+- Update `DECISIONS.md` when wording like "planned," "future," or "when this is added" no longer matches implemented behavior.
+- Update `DECISIONS.md` when a durable boundary is introduced, such as separating session state types or clarifying what an action does not mean.
+- Do this as part of the implementation patch, not only as a final recommendation.
 
 ## Documentation Response Format
 

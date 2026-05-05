@@ -6,6 +6,7 @@ import { DashboardImpactPreview } from "./openloop/DashboardImpactPreview";
 import { DedupeTrendCluster } from "./openloop/DedupeTrendCluster";
 import { FeedbackInputCard } from "./openloop/FeedbackInputCard";
 import { FeedbackLog } from "./openloop/FeedbackLog";
+import { HumanReviewQueue } from "./openloop/HumanReviewQueue";
 import { NormalizedFeedbackRecord } from "./openloop/NormalizedFeedbackRecord";
 import { OpenLoopMetricsBar } from "./openloop/OpenLoopMetricsBar";
 import { useOpenLoop } from "./openloop/OpenLoopProvider";
@@ -19,9 +20,12 @@ export function FeedbackClassifier() {
     feedbackText,
     handleCompleteTask,
     handleCustomClassify,
+    handleMarkHumanReviewComplete,
     handlePresetSelect,
     handleResetSession,
     handleSeedSession,
+    humanReviewQueueItems,
+    humanReviewTrend,
     metrics,
     samples,
     selectedSample,
@@ -66,6 +70,15 @@ export function FeedbackClassifier() {
 
             <div className="lg:col-span-2">
               <RoutingDecisionTrail sample={selectedSample} />
+            </div>
+
+            <div className="lg:col-span-2">
+              <HumanReviewQueue
+                humanReviewRate={metrics.humanReviewRate}
+                queueItems={humanReviewQueueItems}
+                trend={humanReviewTrend}
+                onMarkReviewed={handleMarkHumanReviewComplete}
+              />
             </div>
 
             <div className="lg:col-span-2">

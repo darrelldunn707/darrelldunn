@@ -13,6 +13,14 @@ import {
   classifyFeedback,
 } from "../../../lib/product-readiness-os";
 import { getClusterSummaries } from "../../../lib/product-readiness-os/openloop-clusters";
+import {
+  calculateHumanReviewTrend,
+  clearOpenLoopHumanReviewRecords,
+  createHumanReviewRecord,
+  getHumanReviewQueueItems,
+  readOpenLoopHumanReviewRecords,
+  writeOpenLoopHumanReviewRecords,
+} from "../../../lib/product-readiness-os/openloop-human-review";
 import { calculateOpenLoopMetrics } from "../../../lib/product-readiness-os/openloop-metrics";
 import {
   applyTaskCompletions,
@@ -35,6 +43,9 @@ import {
 import type {
   FeedbackSample,
   OpenLoopClusterSummary,
+  OpenLoopHumanReviewQueueItem,
+  OpenLoopHumanReviewRecord,
+  OpenLoopHumanReviewTrend,
   OpenLoopRoutedTask,
   OpenLoopSessionRecord,
   OpenLoopSessionSource,
@@ -50,9 +61,13 @@ type OpenLoopContextValue = {
   feedbackText: string;
   handleCompleteTask: (task: OpenLoopRoutedTask) => void;
   handleCustomClassify: () => void;
+  handleMarkHumanReviewComplete: (feedbackId: string) => void;
   handlePresetSelect: (sample: FeedbackSample) => void;
   handleResetSession: () => void;
   handleSeedSession: () => void;
+  humanReviewQueueItems: OpenLoopHumanReviewQueueItem[];
+  humanReviewRecords: OpenLoopHumanReviewRecord[];
+  humanReviewTrend: OpenLoopHumanReviewTrend;
   metrics: ReturnType<typeof calculateOpenLoopMetrics>;
   routedTasks: OpenLoopRoutedTask[];
   samples: FeedbackSample[];
@@ -83,11 +98,19 @@ export function OpenLoopProvider({
   const [taskCompletions, setTaskCompletions] = useState<
     OpenLoopTaskCompletionRecord[]
   >([]);
+  const [humanReviewRecords, setHumanReviewRecords] = useState<
+    OpenLoopHumanReviewRecord[]
+  >([]);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [hasLoadedSession, setHasLoadedSession] = useState(false);
   const metrics = useMemo(
-    () => calculateOpenLoopMetrics(sessionRecords, taskCompletions),
-    [sessionRecords, taskCompletions],
+    () =>
+      calculateOpenLoopMetrics(
+        sessionRecords,
+        taskCompletions,
+        humanReviewRecords,
+      ),
+    [sessionRecords, taskCompletions, humanReviewRecords],
   );
   const clusterSummaries = useMemo(
     () => getClusterSummaries(sessionRecords),
@@ -101,11 +124,20 @@ export function OpenLoopProvider({
       ),
     [sessionRecords, taskCompletions],
   );
+  const humanReviewQueueItems = useMemo(
+    () => getHumanReviewQueueItems(sessionRecords, humanReviewRecords),
+    [sessionRecords, humanReviewRecords],
+  );
+  const humanReviewTrend = useMemo(
+    () => calculateHumanReviewTrend(sessionRecords),
+    [sessionRecords],
+  );
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setSessionRecords(readOpenLoopSessionRecords());
       setTaskCompletions(readOpenLoopTaskCompletions());
+      setHumanReviewRecords(readOpenLoopHumanReviewRecords());
       setHasLoadedSession(true);
     }, 0);
 
@@ -119,7 +151,8 @@ export function OpenLoopProvider({
 
     writeOpenLoopSessionRecords(sessionRecords);
     writeOpenLoopTaskCompletions(taskCompletions);
-  }, [hasLoadedSession, sessionRecords, taskCompletions]);
+    writeOpenLoopHumanReviewRecords(humanReviewRecords);
+  }, [hasLoadedSession, sessionRecords, taskCompletions, humanReviewRecords]);
 
   useEffect(() => {
     if (!confirmationMessage) {
@@ -194,11 +227,13 @@ export function OpenLoopProvider({
   function handleResetSession() {
     setSessionRecords([]);
     setTaskCompletions([]);
+    setHumanReviewRecords([]);
     setConfirmationMessage("");
     setFeedbackText(samples[0]?.text ?? "");
     setSelectedSample(classifyFeedback(samples[0]?.text ?? "", samples));
     clearOpenLoopSessionRecords();
     clearOpenLoopTaskCompletions();
+    clearOpenLoopHumanReviewRecords();
   }
 
   function handleCompleteTask(task: OpenLoopRoutedTask) {
@@ -214,6 +249,19 @@ export function OpenLoopProvider({
     );
   }
 
+  function handleMarkHumanReviewComplete(feedbackId: string) {
+    setHumanReviewRecords((records) => {
+      if (records.some((record) => record.feedbackId === feedbackId)) {
+        return records;
+      }
+
+      return [...records, createHumanReviewRecord(feedbackId)];
+    });
+    setConfirmationMessage(
+      `Human review marked complete - ${feedbackId} moved out of the pending queue`,
+    );
+  }
+
   const value = {
     clusterSummaries,
     confirmationMessage,
@@ -221,9 +269,13 @@ export function OpenLoopProvider({
     feedbackText,
     handleCompleteTask,
     handleCustomClassify,
+    handleMarkHumanReviewComplete,
     handlePresetSelect,
     handleResetSession,
     handleSeedSession,
+    humanReviewQueueItems,
+    humanReviewRecords,
+    humanReviewTrend,
     metrics,
     routedTasks,
     samples,

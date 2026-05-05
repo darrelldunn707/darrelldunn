@@ -86,7 +86,6 @@ function GlobalHeader() {
         >
           Product Readiness OS
         </Link>
-        <span className="text-sm font-medium text-stone-500">Contact</span>
       </div>
     </header>
   );
@@ -149,7 +148,7 @@ function FloatingTopLink() {
       aria-label="Back to top"
       className="fixed bottom-4 right-4 z-30 rounded-full border border-stone-200 bg-white/90 px-3 py-2 text-xs font-semibold text-stone-700 shadow-sm backdrop-blur transition hover:border-teal-300 hover:bg-teal-50 hover:text-teal-800 sm:bottom-6 sm:right-6"
     >
-      Top ↑
+      Top
     </a>
   );
 }
@@ -170,11 +169,11 @@ function AccessSeparation() {
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-200">
-            Internal operating view
+            Launch team operating view
           </p>
           <h2 className="mt-2 text-xl font-semibold">Team coordination layer</h2>
           <p className="mt-2 text-sm leading-6 text-stone-200">
-            Internal teams see risks, owners, severity, routing, mitigation
+            Launch teams see risks, owners, severity, routing, mitigation
             plans, feedback classification, and product or engineering actions.
           </p>
         </div>

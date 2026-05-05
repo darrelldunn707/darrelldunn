@@ -4,6 +4,17 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 
 ## Unreleased
 
+### Phase 7A - Human Review Queue
+
+- Added a visible Human Review Queue after Routing Decision Trail and before Dedupe + Trend Cluster.
+- Added localStorage-backed human review status under `openloopHumanReviewSession`.
+- Kept human review status separate from feedback records and task completion records.
+- Added Mark Reviewed behavior so pending review items can move out of the queue without pretending the classification was corrected.
+- Added Human Review Rate to show the historical share of ingested feedback that requires review.
+- Kept Human Review Rate independent from reviewed status so marking an item reviewed does not lower the historical intake-quality metric.
+- Added simple 24-hour review-rate trend logic for Improving, Stable, Rising, or Insufficient data.
+- Preserved the boundary that human review is where automation stops and human judgment takes over.
+
 ### Public GitHub Readiness
 
 - Refactored OpenLoop Feedback Router logic into focused helper modules for session storage, cluster aggregation, routed task generation, seed data, and metrics.
@@ -11,6 +22,12 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 - Kept `FeedbackClassifier.tsx` as the state and layout orchestrator without changing the visible demo experience.
 - Isolated `localStorage` access behind OpenLoop session helper functions so browser-local persistence can be replaced later without changing UI components.
 - Clarified public-readiness documentation for OpenLoop architecture, browser-local persistence, cluster-based tasks, Phase 5 boundaries, and optional SQLite practice scripts.
+- Added a reviewer path to `README.md`.
+- Removed inactive header contact text from the Product Readiness OS demo.
+- Removed unused starter static assets from `public/`.
+- Added a destructive-reset warning to the SQLite practice README.
+- Split SQL practice queries so `Sev 1` / `Sev 2` feedback and `Critical` / `High` risks are reviewed separately.
+- Strengthened implementation documentation rules in `AGENTS.md`, `CODEX.md`, and `DOC_CHECKLIST.md` so phase-tracking updates happen as part of implementation closeout.
 
 ### Phase 5B Pass 1 - OpenLoop Provider Boundary
 
@@ -44,12 +61,6 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 - Split cluster metrics into Detected Clusters for all valid duplicate clusters and Open Clusters for unresolved clusters without completed linked routed tasks.
 - Added OpenLoop-only cluster operational status and Dashboard Impact Preview updates for completed follow-up.
 - Completing a task means the operational follow-up was completed, not that the underlying product work is complete.
-
-### Future Page-Wide Completion Refinement
-
-Planned, not implemented yet.
-
-- May deepen synchronization beyond compact signal cards after the current OpenLoop-derived pattern is reviewed.
 
 ### Phase 4 - Routed Tasks
 

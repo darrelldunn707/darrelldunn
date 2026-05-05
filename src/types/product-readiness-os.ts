@@ -209,6 +209,36 @@ export type OpenLoopTaskCompletionRecord = {
   completionImpact: string;
 };
 
+export type OpenLoopHumanReviewRecord = {
+  feedbackId: string;
+  reviewedAt: string;
+  reviewStatus: "Reviewed";
+};
+
+export type OpenLoopHumanReviewQueueItem = {
+  feedbackId: string;
+  reviewReason: string;
+  category: string;
+  severity: FeedbackSeverity;
+  confidence: string;
+  suggestedRoute: string;
+  status: "Needs review";
+  record: OpenLoopSessionRecord;
+};
+
+export type OpenLoopHumanReviewTrendLabel =
+  | "Improving"
+  | "Stable"
+  | "Rising"
+  | "Insufficient data";
+
+export type OpenLoopHumanReviewTrend = {
+  label: OpenLoopHumanReviewTrendLabel;
+  deltaPoints?: number;
+  currentRate: number;
+  previousRate: number;
+};
+
 export type OpenLoopSeedClusterProfile = Pick<
   FeedbackClassification,
   | "category"

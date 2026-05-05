@@ -10,6 +10,13 @@ Product Readiness OS shows how a Product Engagement Specialist could coordinate 
 
 The main route is [`/product-readiness-os`](http://localhost:3000/product-readiness-os).
 
+## Reviewer Path
+
+1. Open `/product-readiness-os` and scan the stakeholder view links.
+2. In OpenLoop Feedback Router, click `Seed Sample Launch Feedback`.
+3. Review the metrics, duplicate cluster summary, routed tasks, and feedback log.
+4. Complete one routed task and confirm the signal cards update while the static readiness, risk, support, and insight data remains unchanged.
+
 ## Run Locally
 
 ```bash
@@ -34,7 +41,6 @@ npm run build
 - `src/lib/product-readiness-os/` - Demo logic and helpers.
 - `src/types/` - Shared TypeScript types.
 - `sql/product-readiness-os/` - Optional SQLite practice scripts based on the demo data model.
-- `public/` - Static assets.
 
 ## Demo Data And Persistence
 

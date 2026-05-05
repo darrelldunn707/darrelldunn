@@ -1,5 +1,7 @@
 import { calculateOpenLoopMetrics } from "../../../lib/product-readiness-os/openloop-metrics";
 
+type MetricCardValue = string | number;
+
 export function OpenLoopMetricsBar({
   metrics,
   onReset,
@@ -9,19 +11,20 @@ export function OpenLoopMetricsBar({
   onReset: () => void;
   onSeed: () => void;
 }) {
-  const metricCards: [string, number][] = [
+  const metricCards: [string, MetricCardValue][] = [
     ["Total Ingested Feedback", metrics.totalIngestedFeedback],
     ["Detected Clusters", metrics.detectedClusters],
     ["Open Clusters", metrics.openClusters],
     ["Open Tasks", metrics.openTasks],
     ["Human Review Queue", metrics.humanReviewQueue],
+    ["Human Review Rate", `${metrics.humanReviewRate}%`],
     ["Completed Tasks", metrics.completedTasks],
   ];
 
   return (
     <div className="mt-6 rounded-lg border border-stone-200 bg-stone-100 p-4">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <dl className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <dl className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
           {metricCards.map(([label, value]) => (
             <div
               key={label}

@@ -19,7 +19,7 @@ FROM feedback_records
 GROUP BY category
 ORDER BY feedback_count DESC;
 
--- 3. Find launch-blocking or serious feedback
+-- 3. Find Sev 1 or Sev 2 feedback records
 SELECT
   feedback_id,
   customer_segment,
@@ -28,11 +28,34 @@ SELECT
   status,
   likely_owner
 FROM feedback_records
-WHERE severity IN ('Sev 1', 'Sev 2', 'Critical', 'High')
-   OR status = 'Needs review'
-ORDER BY severity, ingested_at DESC;
+WHERE severity IN ('Sev 1', 'Sev 2')
+ORDER BY
+  CASE severity
+    WHEN 'Sev 1' THEN 1
+    WHEN 'Sev 2' THEN 2
+    ELSE 3
+  END,
+  ingested_at DESC;
 
--- 4. Show clusters with their routed tasks
+-- 4. Find Critical or High launch risks
+SELECT
+  risk_title,
+  severity,
+  affected_audience,
+  owner,
+  status,
+  escalation_path
+FROM risks
+WHERE severity IN ('Critical', 'High')
+ORDER BY
+  CASE severity
+    WHEN 'Critical' THEN 1
+    WHEN 'High' THEN 2
+    ELSE 3
+  END,
+  risk_title;
+
+-- 5. Show clusters with their routed tasks
 SELECT
   fc.cluster_name,
   fc.category,
@@ -45,7 +68,7 @@ LEFT JOIN routed_tasks rt
   ON fc.cluster_id = rt.cluster_id
 ORDER BY rt.priority, fc.cluster_name;
 
--- 5. Count open tasks by department
+-- 6. Count open tasks by department
 SELECT
   department,
   status,
@@ -54,7 +77,7 @@ FROM routed_tasks
 GROUP BY department, status
 ORDER BY department, task_count DESC;
 
--- 6. Show readiness items that are not complete
+-- 7. Show readiness items that are not complete
 SELECT
   workstream,
   item_label,
@@ -66,7 +89,7 @@ FROM readiness_items
 WHERE status != 'Complete'
 ORDER BY due_date;
 
--- 7. Show risks by severity
+-- 8. Show all risks by severity
 SELECT
   risk_title,
   severity,
@@ -83,5 +106,3 @@ ORDER BY
     WHEN 'Low' THEN 4
     ELSE 5
   END;
-
-  

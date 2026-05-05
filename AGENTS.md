@@ -30,6 +30,24 @@ Use this format:
 
 Do not silently skip documentation review after implementation work.
 
+## Implementation Documentation Gate
+
+For any code, content, UI, data, SQL, or public-readiness implementation, documentation follow-through must happen before the task is considered complete.
+
+If the implementation is named as a phase, pass, milestone, or public-readiness slice, update `CHANGELOG.md` in the same task. Do not leave that update as a recommendation unless the user explicitly requested code-only or docs-deferred work.
+
+After implementation and before the final response:
+
+1. Review `DOC_CHECKLIST.md`.
+2. Update docs in the same task when the implementation changes completed behavior, public copy, route structure, data flow, setup, validation, phase status, or public-readiness posture.
+3. Always reconcile:
+   - `CHANGELOG.md` for completed work shipped in this task.
+   - `TODO.md` for work that remains open, planned, deferred, or no longer active.
+   - `DECISIONS.md` when the implementation settles or changes a durable constraint.
+   - `SPEC.md` when behavior, metrics, persistence keys, state ownership, or demo scope changes.
+4. Do not leave completed implementation work only as a recommendation when the docs are already known to be stale.
+5. If docs truly do not need changes, say what was reviewed and why no update was needed.
+
 ## Collaboration Defaults
 
 - Before coding, summarize relevant existing behavior and identify affected files.

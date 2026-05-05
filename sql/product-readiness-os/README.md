@@ -44,6 +44,8 @@ sqlite3 db/product-readiness-os.sqlite < sql/product-readiness-os/002_seed_data.
 sqlite3 db/product-readiness-os.sqlite < sql/product-readiness-os/003_practice_queries.sql
 ```
 
+Warning: `001_schema.sql` is a local practice reset script. It drops and recreates the practice tables before seeding. Run it only against the generated SQLite database under `db/`, never against production or shared data.
+
 ---
 
 ## Scope
