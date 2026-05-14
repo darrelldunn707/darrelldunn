@@ -1,6 +1,33 @@
 # Documentation Checklist
 
-Use this checklist after code, content, design, or demo behavior changes.
+Use this checklist before and after code, content, design, or demo behavior changes.
+
+## Documentation Preflight
+
+Before coding, identify whether the task is likely to affect:
+
+- Product behavior, metrics, or demo scope
+- User-facing copy, labels, public claims, or role framing
+- Demo phase status, completed work, deferred work, or backlog
+- Data flow, state ownership, persistence keys, or architecture
+- Setup, validation commands, reviewer path, routes, or project structure
+- Visual design, palette usage, UI color roles, or reusable visual patterns
+
+If any item applies and the prompt does not explicitly defer docs, plan the relevant documentation updates as part of the implementation.
+
+Use recommendations instead of direct updates only when the prompt says not to edit docs, the impact is uncertain, the update requires product judgment, or the change is large enough to deserve a separate pass.
+
+## Mandatory Documentation Triggers
+
+Update:
+
+- `CHANGELOG.md` when completed implementation work ships, especially named phases, passes, milestones, or public-readiness slices.
+- `SPEC.md` when product behavior, metrics, persistence keys, state ownership, data assumptions, demo scope, success criteria, or route behavior changes.
+- `DECISIONS.md` when durable constraints, non-goals, accepted direction, role-positioning rules, or architecture boundaries change.
+- `TODO.md` when active work, backlog, deferred work, phase status, or completed work tracking changes.
+- `README.md` when setup, validation commands, project structure, route structure, reviewer path, documentation map, or public orientation changes.
+- `CONTENT.md` when user-facing copy, labels, public claims, tone, role framing, or wording boundaries change.
+- `BRAND.md` when visual design, palette usage, UI color roles, layout patterns, or reusable visual treatments change.
 
 ## Product Behavior Changed?
 
@@ -67,10 +94,12 @@ Check for:
 Update:
 
 - `CHANGELOG.md`
+- `TODO.md`
 
 Review:
 
-- `TODO.md`
+- `SPEC.md`
+- `DECISIONS.md`
 
 Check for:
 
@@ -78,6 +107,7 @@ Check for:
 - Partial work that should be marked planned or deferred
 - Follow-up work that belongs in backlog
 - Completed named phase work missing from `CHANGELOG.md`
+- Behavior, metrics, persistence, state ownership, data flow, or architecture changes that belong in `SPEC.md` or `DECISIONS.md`
 
 Before final response, verify:
 

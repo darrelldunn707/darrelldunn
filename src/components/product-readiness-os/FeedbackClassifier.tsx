@@ -21,12 +21,15 @@ export function FeedbackClassifier() {
     handleCompleteTask,
     handleCustomClassify,
     handleMarkHumanReviewComplete,
+    handleSaveHumanReviewOverride,
     handlePresetSelect,
     handleResetSession,
     handleSeedSession,
     humanReviewQueueItems,
+    humanReviewRecords,
     humanReviewTrend,
     metrics,
+    overrideRecords,
     samples,
     selectedSample,
     sessionRecords,
@@ -78,6 +81,7 @@ export function FeedbackClassifier() {
                 queueItems={humanReviewQueueItems}
                 trend={humanReviewTrend}
                 onMarkReviewed={handleMarkHumanReviewComplete}
+                onSaveOverride={handleSaveHumanReviewOverride}
               />
             </div>
 
@@ -104,7 +108,11 @@ export function FeedbackClassifier() {
             </div>
 
             <div className="lg:col-span-2">
-              <FeedbackLog records={feedbackLogRecords} />
+              <FeedbackLog
+                records={feedbackLogRecords}
+                humanReviewRecords={humanReviewRecords}
+                overrideRecords={overrideRecords}
+              />
             </div>
           </div>
         ) : null}

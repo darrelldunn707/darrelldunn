@@ -1,7 +1,25 @@
-import type { OpenLoopSessionRecord } from "../../../types/product-readiness-os";
+import type {
+  OpenLoopHumanReviewRecord,
+  OpenLoopOverrideRecord,
+  OpenLoopSessionRecord,
+} from "../../../types/product-readiness-os";
 
-export function FeedbackLog({ records }: { records: OpenLoopSessionRecord[] }) {
+export function FeedbackLog({
+  humanReviewRecords = [],
+  overrideRecords = [],
+  records,
+}: {
+  humanReviewRecords?: OpenLoopHumanReviewRecord[];
+  overrideRecords?: OpenLoopOverrideRecord[];
+  records: OpenLoopSessionRecord[];
+}) {
   const recentRecords = records.slice(-12).reverse();
+  const reviewedFeedbackIds = new Set(
+    humanReviewRecords.map((record) => record.feedbackId),
+  );
+  const overriddenFeedbackIds = new Set(
+    overrideRecords.map((record) => record.feedbackId),
+  );
 
   return (
     <details className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm">
@@ -73,7 +91,12 @@ export function FeedbackLog({ records }: { records: OpenLoopSessionRecord[] }) {
                     {record.classification.likelyOwner}
                   </td>
                   <td className="py-3 align-top text-stone-700">
-                    {record.classification.status}
+                    {getRecordStatus(
+                      record.classification.feedbackId,
+                      reviewedFeedbackIds,
+                      overriddenFeedbackIds,
+                      record.classification.status,
+                    )}
                   </td>
                 </tr>
               ))}
@@ -88,4 +111,21 @@ export function FeedbackLog({ records }: { records: OpenLoopSessionRecord[] }) {
       </div>
     </details>
   );
+}
+
+function getRecordStatus(
+  feedbackId: string,
+  reviewedFeedbackIds: Set<string>,
+  overriddenFeedbackIds: Set<string>,
+  defaultStatus: string,
+) {
+  if (overriddenFeedbackIds.has(feedbackId)) {
+    return "Overridden";
+  }
+
+  if (reviewedFeedbackIds.has(feedbackId)) {
+    return "Reviewed";
+  }
+
+  return defaultStatus;
 }

@@ -4,6 +4,17 @@ This file tracks completed Product Readiness OS demo work. Keep `TODO.md` focuse
 
 ## Unreleased
 
+### Phase 7B - Human Review Overrides
+
+- Added compact inline override controls inside the Human Review Queue.
+- Added browser-local override state under `openloopOverrideSession`.
+- Kept override records separate from original feedback records and human review status.
+- Supported record-level overrides for category, severity, likely owner, recommended route, and override reason.
+- Saving an override marks the feedback item reviewed and removes it from the pending Human Review Queue.
+- Kept Human Review Rate historical so override actions do not lower the intake-quality metric.
+- Updated Feedback Log status display to show Reviewed or Overridden when applicable.
+- Kept overrides scoped to the reviewed record only, with no behavioral learning or future-feedback automation.
+
 ### Phase 7A - Human Review Queue
 
 - Added a visible Human Review Queue after Routing Decision Trail and before Dedupe + Trend Cluster.

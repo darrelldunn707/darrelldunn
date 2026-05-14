@@ -45,17 +45,58 @@ The demo should show:
 
 Keep documentation aligned with the live demo.
 
-Update or recommend updates when changes affect:
+Before coding, identify whether the task is likely to affect documentation. If product behavior, user-facing copy, demo phase status, data flow, state persistence, metrics, architecture, setup, validation, visual design, or role positioning may change, include the likely documentation updates in the implementation plan.
 
-- Navigation labels or section names
-- Product behavior
-- Data model or persistence
-- Demo phases
-- User-facing copy
-- Visual design system
-- Scope boundaries
-- Role positioning
-- Local setup or validation commands
+## Documentation Update Requirement
+
+When an implementation changes product behavior, user-visible copy, demo phase status, data flow, state persistence, metrics, or architecture, update the relevant documentation in the same pass unless the prompt explicitly says not to edit docs.
+
+When the required documentation update is obvious and small, make the update directly.
+
+Use recommendations only when:
+- the documentation impact is uncertain,
+- the update would require product judgment,
+- the user explicitly requested code-only changes,
+- or the documentation change is large enough to deserve a separate pass.
+
+## Mandatory Documentation Triggers
+
+Update `CHANGELOG.md` when:
+- a phase, milestone, or named feature is completed,
+- a meaningful user-visible behavior ships,
+- a refactor materially improves public repo quality,
+- metrics, workflows, or demo interactions change.
+
+Update `SPEC.md` when:
+- product behavior changes,
+- metrics are added or redefined,
+- localStorage/session behavior changes,
+- routing, clustering, review, task, or completion logic changes,
+- acceptance criteria or demo scope changes.
+
+Update `DECISIONS.md` when:
+- a durable architecture choice is made,
+- a non-goal is established,
+- a product meaning needs to stay consistent,
+- a future assistant should not casually reverse a decision.
+
+Update `TODO.md` when:
+- a phase is completed,
+- an active work item becomes done,
+- a backlog item becomes active,
+- or a planned item is intentionally deferred.
+
+Update `README.md` when:
+- setup changes,
+- the project structure changes materially,
+- the public demo scope changes,
+- or a reviewer needs new orientation to understand the repo.
+
+Update `CONTENT.md` when:
+- public-facing claims, labels, section wording, or positioning rules change.
+
+Update `BRAND.md` when:
+- visual system, color roles, layout conventions, or reusable UI patterns change.
 
 Use this ownership map:
 
@@ -75,8 +116,8 @@ Use this ownership map:
 - Use `TODO.md` for active and future phases.
 - Do not leave completed work in `TODO.md`.
 - If a phase is partially implemented, document it clearly as partial, planned, or deferred.
-- If a request names a phase, pass, or milestone, update `CHANGELOG.md` in the same implementation task when the work ships.
-- If a phase changes metrics, persistence keys, state ownership, or demo behavior, update `SPEC.md` in the same implementation task.
+- If a named phase, pass, milestone, or public-readiness slice is completed, update `CHANGELOG.md` and reconcile `TODO.md` in the same implementation task.
+- If the completed phase changes behavior, metrics, persistence keys, state ownership, data flow, architecture, or demo scope, review and update `SPEC.md` and `DECISIONS.md` as needed in the same task.
 
 ## Implementation Closeout
 
@@ -89,11 +130,21 @@ When implementation changes pass validation, update phase-tracking docs before f
 - Update `DECISIONS.md` when wording like "planned," "future," or "when this is added" no longer matches implemented behavior.
 - Update `DECISIONS.md` when a durable boundary is introduced, such as separating session state types or clarifying what an action does not mean.
 - Do this as part of the implementation patch, not only as a final recommendation.
+- Recommendations are still allowed when docs are explicitly deferred, the documentation impact is uncertain, the update requires product judgment, or the documentation change is large enough to deserve a separate pass.
 
-## Documentation Response Format
+## Final Response Requirements
 
-After implementation work, include documentation follow-through in the final response:
+Every implementation response must include:
 
-- Updated: documentation changed in the task
-- Recommended: documentation updates that should be considered next
-- Not needed: documentation areas reviewed that do not need changes
+1. Files changed
+2. Behavior changed
+3. Validation run
+4. Documentation follow-through
+
+Documentation follow-through must use:
+
+- Updated: docs changed in this pass
+- Recommended: docs that still need review, with why
+- Not needed: docs reviewed and why no update was needed
+
+If documentation should have changed but was not changed because the prompt prohibited it, say that explicitly.

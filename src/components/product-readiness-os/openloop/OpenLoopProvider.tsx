@@ -23,6 +23,12 @@ import {
 } from "../../../lib/product-readiness-os/openloop-human-review";
 import { calculateOpenLoopMetrics } from "../../../lib/product-readiness-os/openloop-metrics";
 import {
+  clearOpenLoopOverrideRecords,
+  createOpenLoopOverrideRecord,
+  readOpenLoopOverrideRecords,
+  writeOpenLoopOverrideRecords,
+} from "../../../lib/product-readiness-os/openloop-overrides";
+import {
   applyTaskCompletions,
   getRoutedTasks,
 } from "../../../lib/product-readiness-os/openloop-routed-tasks";
@@ -46,6 +52,8 @@ import type {
   OpenLoopHumanReviewQueueItem,
   OpenLoopHumanReviewRecord,
   OpenLoopHumanReviewTrend,
+  OpenLoopOverrideInput,
+  OpenLoopOverrideRecord,
   OpenLoopRoutedTask,
   OpenLoopSessionRecord,
   OpenLoopSessionSource,
@@ -62,6 +70,10 @@ type OpenLoopContextValue = {
   handleCompleteTask: (task: OpenLoopRoutedTask) => void;
   handleCustomClassify: () => void;
   handleMarkHumanReviewComplete: (feedbackId: string) => void;
+  handleSaveHumanReviewOverride: (
+    item: OpenLoopHumanReviewQueueItem,
+    input: OpenLoopOverrideInput,
+  ) => void;
   handlePresetSelect: (sample: FeedbackSample) => void;
   handleResetSession: () => void;
   handleSeedSession: () => void;
@@ -69,6 +81,7 @@ type OpenLoopContextValue = {
   humanReviewRecords: OpenLoopHumanReviewRecord[];
   humanReviewTrend: OpenLoopHumanReviewTrend;
   metrics: ReturnType<typeof calculateOpenLoopMetrics>;
+  overrideRecords: OpenLoopOverrideRecord[];
   routedTasks: OpenLoopRoutedTask[];
   samples: FeedbackSample[];
   selectedSample: FeedbackSample | undefined;
@@ -100,6 +113,9 @@ export function OpenLoopProvider({
   >([]);
   const [humanReviewRecords, setHumanReviewRecords] = useState<
     OpenLoopHumanReviewRecord[]
+  >([]);
+  const [overrideRecords, setOverrideRecords] = useState<
+    OpenLoopOverrideRecord[]
   >([]);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [hasLoadedSession, setHasLoadedSession] = useState(false);
@@ -138,6 +154,7 @@ export function OpenLoopProvider({
       setSessionRecords(readOpenLoopSessionRecords());
       setTaskCompletions(readOpenLoopTaskCompletions());
       setHumanReviewRecords(readOpenLoopHumanReviewRecords());
+      setOverrideRecords(readOpenLoopOverrideRecords());
       setHasLoadedSession(true);
     }, 0);
 
@@ -152,7 +169,14 @@ export function OpenLoopProvider({
     writeOpenLoopSessionRecords(sessionRecords);
     writeOpenLoopTaskCompletions(taskCompletions);
     writeOpenLoopHumanReviewRecords(humanReviewRecords);
-  }, [hasLoadedSession, sessionRecords, taskCompletions, humanReviewRecords]);
+    writeOpenLoopOverrideRecords(overrideRecords);
+  }, [
+    hasLoadedSession,
+    sessionRecords,
+    taskCompletions,
+    humanReviewRecords,
+    overrideRecords,
+  ]);
 
   useEffect(() => {
     if (!confirmationMessage) {
@@ -228,12 +252,14 @@ export function OpenLoopProvider({
     setSessionRecords([]);
     setTaskCompletions([]);
     setHumanReviewRecords([]);
+    setOverrideRecords([]);
     setConfirmationMessage("");
     setFeedbackText(samples[0]?.text ?? "");
     setSelectedSample(classifyFeedback(samples[0]?.text ?? "", samples));
     clearOpenLoopSessionRecords();
     clearOpenLoopTaskCompletions();
     clearOpenLoopHumanReviewRecords();
+    clearOpenLoopOverrideRecords();
   }
 
   function handleCompleteTask(task: OpenLoopRoutedTask) {
@@ -262,6 +288,28 @@ export function OpenLoopProvider({
     );
   }
 
+  function handleSaveHumanReviewOverride(
+    item: OpenLoopHumanReviewQueueItem,
+    input: OpenLoopOverrideInput,
+  ) {
+    setOverrideRecords((records) => {
+      const overrideRecord = createOpenLoopOverrideRecord(item.record, input);
+      const nextRecords = records.filter(
+        (record) => record.feedbackId !== item.feedbackId,
+      );
+
+      return [...nextRecords, overrideRecord];
+    });
+    setHumanReviewRecords((records) => {
+      if (records.some((record) => record.feedbackId === item.feedbackId)) {
+        return records;
+      }
+
+      return [...records, createHumanReviewRecord(item.feedbackId)];
+    });
+    setConfirmationMessage(`Override saved - ${item.feedbackId} reviewed`);
+  }
+
   const value = {
     clusterSummaries,
     confirmationMessage,
@@ -270,6 +318,7 @@ export function OpenLoopProvider({
     handleCompleteTask,
     handleCustomClassify,
     handleMarkHumanReviewComplete,
+    handleSaveHumanReviewOverride,
     handlePresetSelect,
     handleResetSession,
     handleSeedSession,
@@ -277,6 +326,7 @@ export function OpenLoopProvider({
     humanReviewRecords,
     humanReviewTrend,
     metrics,
+    overrideRecords,
     routedTasks,
     samples,
     selectedSample,

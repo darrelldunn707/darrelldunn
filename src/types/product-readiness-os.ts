@@ -239,6 +239,38 @@ export type OpenLoopHumanReviewTrend = {
   previousRate: number;
 };
 
+export type OpenLoopOverrideReason =
+  | "Better category match"
+  | "Severity adjusted after review"
+  | "Route changed to better owner"
+  | "Duplicate pattern clarified"
+  | "Escalation path corrected"
+  | "Other";
+
+export type OpenLoopOverrideInput = {
+  overrideCategory: FeedbackCategory;
+  overrideSeverity: FeedbackSeverity;
+  overrideLikelyOwner: string;
+  overrideRecommendedRoute: string;
+  overrideReason: OpenLoopOverrideReason;
+};
+
+export type OpenLoopOverrideRecord = {
+  feedbackId: string;
+  duplicateCluster: string;
+  originalCategory: FeedbackCategory;
+  overrideCategory: FeedbackCategory;
+  originalSeverity: FeedbackSeverity;
+  overrideSeverity: FeedbackSeverity;
+  originalLikelyOwner: string;
+  overrideLikelyOwner: string;
+  originalRecommendedRoute: string;
+  overrideRecommendedRoute: string;
+  overrideReason: OpenLoopOverrideReason;
+  overrideStatus: "Overridden";
+  reviewedAt: string;
+};
+
 export type OpenLoopSeedClusterProfile = Pick<
   FeedbackClassification,
   | "category"

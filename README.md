@@ -61,6 +61,8 @@ Current docs:
 
 - `README.md` - Project overview, local commands, structure, and documentation map.
 - `AGENTS.md` - Agent/workspace instructions, including Next.js version guidance.
+- `TASKS.md` - Active task queue, statuses, owners, acceptance criteria, and next agent cues.
+- `HANDOFF.md` - Latest agent handoff, validation notes, documentation follow-through, and next recommended agent.
 - `BRAND.md` - Current color palette, UI color roles, and brand usage notes.
 - `CODEX.md` - Engineering, product, content, and design constraints for Codex work.
 - `PORTFOLIO_NOTES.md` - Role target, capability framing, demo concept, and positioning notes.
@@ -73,6 +75,12 @@ Current docs:
 - `sql/product-readiness-os/README.md` - Optional SQLite practice database notes and script order.
 
 No additional documentation folders are needed right now. Keep these files at the repo root until the docs become large enough to justify a dedicated `docs/` directory.
+
+## Agent Workflow Quick Start
+
+Before starting work, read `AGENTS.md`, then use `TASKS.md` to find the first active task matching your role and status. Read `HANDOFF.md` for the latest baton pass before changing files.
+
+The human/product owner chooses direction and promotes backlog work into the active queue. Agents should stay inside the approved task, update `TASKS.md` as the status changes, and refresh `HANDOFF.md` before handing work to the next agent.
 
 ## Development Notes
 

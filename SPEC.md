@@ -51,7 +51,7 @@ This is a fictional work sample. It is not an OpenAI internal tool.
 
 ## Data Model
 
-Version 1 uses local TypeScript data for baseline demo content and browser-local `localStorage` state for the OpenLoop live demo session, routed-task completion state, and human review state.
+Version 1 uses local TypeScript data for baseline demo content and browser-local `localStorage` state for the OpenLoop live demo session, routed-task completion state, human review state, and review override state.
 
 Current data areas:
 
@@ -65,10 +65,11 @@ Current data areas:
 - Routed tasks derived from active clusters
 - Routed task completion records
 - Human review records
+- Human review override records
 - Product insights
 - Partner readiness
 
-The OpenLoop session is front-end only. It persists in the browser so preset clicks, custom feedback ingestion, seeded sample feedback, cluster summaries, routed tasks, task completion, human review status, and the feedback log can visibly update across refreshes.
+The OpenLoop session is front-end only. It persists in the browser so preset clicks, custom feedback ingestion, seeded sample feedback, cluster summaries, routed tasks, task completion, human review status, review overrides, and the feedback log can visibly update across refreshes.
 
 ## OpenLoop Architecture
 
@@ -79,6 +80,7 @@ OpenLoop is implemented as a front-end-only demo module:
 - `src/components/product-readiness-os/openloop/` contains the OpenLoop provider, hook, and Feedback Router cards for metrics, feedback input, classification, normalized records, routing decisions, human review, dedupe, routed tasks, dashboard impact, and feedback log.
 - `src/lib/product-readiness-os/openloop-session.ts` isolates browser-local feedback session storage and task completion storage.
 - `src/lib/product-readiness-os/openloop-human-review.ts` isolates browser-local human review storage and derives pending queue items, review reasons, Human Review Rate, and review-rate trend.
+- `src/lib/product-readiness-os/openloop-overrides.ts` isolates browser-local override storage and creates record-level override records.
 - `src/lib/product-readiness-os/openloop-clusters.ts` groups meaningful duplicate clusters and calculates trend labels.
 - `src/lib/product-readiness-os/openloop-routed-tasks.ts` generates routed tasks from cluster summaries, not from every individual feedback record.
 - `src/lib/product-readiness-os/openloop-seed-data.ts` creates coherent sample launch feedback records for the live demo session.
@@ -122,11 +124,31 @@ Current behavior:
 - Human Review Rate is a historical intake-quality metric, so it does not decrease just because a pending item was marked reviewed.
 - Human Review Queue displays a simple 24-hour trend comparing the current review rate to the previous 24-hour window.
 
-Phase 7A deferred behavior:
+Phase 7A deferred behavior now addressed by Phase 7B:
 
-- Human review does not include override controls yet.
-- Human review does not add behavioral learning logic yet.
-- Human review does not automatically correct classifications, routes, clusters, severity, or priority.
+- Human review override controls are available for queued records.
+
+## Phase 7B Human Review Override Behavior
+
+Phase 7B adds record-level Human Review Overrides so a reviewer can adjust operational handling for a specific feedback record.
+
+Current behavior:
+
+- Reviewers can open compact inline override controls from a Human Review Queue row.
+- Reviewers can override category, severity, likely owner, recommended route, and override reason.
+- Saving an override persists a separate override record under `openloopOverrideSession`.
+- Saving an override also marks the feedback item reviewed so it leaves the pending Human Review Queue.
+- Override records preserve original category, severity, likely owner, and recommended route alongside the override values.
+- Feedback Log can show Overridden or Reviewed status without changing the original feedback record.
+- Human Review Queue decreases when an override is saved because the item is reviewed.
+- Human Review Rate remains historical and does not decrease because an item was overridden.
+
+Phase 7B deferred behavior:
+
+- Overrides do not automatically correct the original feedback record.
+- Overrides do not apply to future similar feedback.
+- Overrides do not add behavioral learning logic.
+- Overrides do not change duplicate clusters, routed tasks, readiness, risk, support, or insights outside the reviewed record's operational handling.
 
 Still deferred behavior:
 
@@ -140,6 +162,7 @@ Still deferred behavior:
 - No external APIs in version 1.
 - No live SQLite connection in version 1.
 - No live customer data.
+- No behavioral learning from human review overrides in version 1.
 - No confidential company branding or internal terminology.
 - No claim that the demo is an internal OpenAI tool.
 - No AI workflow consulting positioning.

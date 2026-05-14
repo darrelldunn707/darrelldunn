@@ -60,6 +60,10 @@ OpenLoop state should flow through `OpenLoopProvider` and `useOpenLoop`, not thr
 
 Human review status should be stored separately from feedback session records. Mark Reviewed means a human review checkpoint was completed. It should not imply that OpenLoop corrected the classification, learned a new behavior, changed the route, or resolved the underlying product issue.
 
+### 015. Human review overrides are record-level only
+
+OpenLoop override records should be stored separately from feedback session records under their own browser-local session state. Saving an override means a reviewer adjusted operational handling for that record. It should not mutate the original feedback record, apply to future similar feedback, create behavioral learning, or imply that the underlying product issue was fixed.
+
 ## Superseded Decisions
 
 None yet.

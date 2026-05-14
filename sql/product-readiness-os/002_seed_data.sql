@@ -28,6 +28,7 @@ INSERT INTO teams (team_id, team_name, team_type) VALUES
 
 INSERT INTO feedback_clusters (
   cluster_id,
+  launch_id,
   cluster_name,
   category,
   subcategory,
@@ -36,10 +37,10 @@ INSERT INTO feedback_clusters (
   priority_signal
 )
 VALUES
-  (1, 'SSO setup failures', 'Authentication / SSO', 'Authentication setup', 'Launch blocker', 3, 'Recurring SSO setup failure affecting enterprise admins during the launch window.'),
-  (2, 'Connector permissions confusion', 'Permissions', 'Access model clarity', 'Usability / comprehension issue', 1, 'Rising permissions confusion creating setup friction for enterprise admins.'),
-  (3, 'Partner training gaps', 'Partner Enablement', 'Training readiness', 'Launch readiness gap', 4, 'Recurring partner enablement gap affecting external support teams during the launch window.'),
-  (4, 'Documentation mismatch', 'Documentation', 'Launch documentation accuracy', 'Documentation gap', 6, 'Rising documentation mismatch creating avoidable support volume.');
+  (1, 1, 'SSO setup failures', 'Authentication / SSO', 'Authentication setup', 'Launch blocker', 3, 'Recurring SSO setup failure affecting enterprise admins during the launch window.'),
+  (2, 1, 'Connector permissions confusion', 'Permissions', 'Access model clarity', 'Usability / comprehension issue', 1, 'Rising permissions confusion creating setup friction for enterprise admins.'),
+  (3, 1, 'Partner training gaps', 'Partner Enablement', 'Training readiness', 'Launch readiness gap', 4, 'Recurring partner enablement gap affecting external support teams during the launch window.'),
+  (4, 1, 'Documentation mismatch', 'Documentation', 'Launch documentation accuracy', 'Documentation gap', 6, 'Rising documentation mismatch creating avoidable support volume.');
 
 INSERT INTO feedback_records (
   feedback_id,
